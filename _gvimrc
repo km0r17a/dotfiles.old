@@ -1,0 +1,81 @@
+"----------------------------------------
+"システム設定
+"----------------------------------------
+
+"エラー時の音とビジュアルベルの抑制。
+set noerrorbells
+set novisualbell
+set visualbell t_vb=
+
+"IMEの状態をカラー表示
+if has('multi_byte_ime')
+  highlight Cursor guifg=NONE guibg=Green
+  highlight CursorIM guifg=NONE guibg=Purple
+endif
+
+"----------------------------------------
+" 表示設定
+"----------------------------------------
+
+set cmdheight=2
+set nomousefocus
+set mousehide
+
+set guioptions-=T
+set guioptions-=m
+set guioptions+=a
+set guioptions-=r
+set guioptions-=R
+set guioptions-=l
+set guioptions-=L
+
+"フォント設定
+set guifont=MS_Gothic:h10:cSHIFTJIS
+set guifontwide=MS_Gothic:h10:cSHIFTJIS
+set printfont=MS_Mincho:h10:cSHIFTJIS
+
+"----------------------------------------
+" window position
+"----------------------------------------
+
+let s:infofile = '~/.vim/.vimops'
+
+""""""" s:SaveWindowParam(filename) を追加
+
+"----------------------------------------
+" 追加
+"----------------------------------------
+
+" カラースキーム
+colorscheme landspace
+
+set columns=220
+set lines=73
+set noexpandtab
+set tabstop=4
+set shiftwidth=4
+set confirm
+set diffopt-=filler
+
+"----------------------------------------
+" 各種プラグイン設定
+"----------------------------------------
+
+"set imdisable
+"highlight ZenkakuSpace guibg=#000060
+highlight ZenkakuSpace guibg=#1f1f0f
+match ZenkakuSpace /　/
+
+"----------------------------------------
+" misc
+"----------------------------------------
+
+let IM_vi_CooperativeMode = 0
+inoremap <silent> <ESC> <ESC>:<CR>
+inoremap <silent> <C-[> <ESC>:<CR>
+set timeout timeoutlen=3000 ttimeoutlen=100
+
+"----------------------------------------
+" タブを自由に移動させる
+"----------------------------------------
+
