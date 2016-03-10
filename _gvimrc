@@ -7,12 +7,6 @@ set noerrorbells
 set novisualbell
 set visualbell t_vb=
 
-"IMEの状態をカラー表示
-if has('multi_byte_ime')
-  highlight Cursor guifg=NONE guibg=Green
-  highlight CursorIM guifg=NONE guibg=Purple
-endif
-
 "----------------------------------------
 " 表示設定
 "----------------------------------------
@@ -38,22 +32,40 @@ set printfont=MS_Mincho:h10:cSHIFTJIS
 " window position
 "----------------------------------------
 
-let s:infofile = '~/.vim/.vimops'
+let g:save_window_file = expand('~/vimfiles/.vimwinpos')
+augroup SaveWindow
+  autocmd!
+  autocmd VimLeavePre * call s:save_window()
+  function! s:save_window()
+    let options = [
+      \ 'set columns=' . &columns,
+      \ 'set lines=' . &lines,
+      \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
+      \ ]
+    call writefile(options, g:save_window_file)
+  endfunction
+augroup END
 
-""""""" s:SaveWindowParam(filename) を追加
+if filereadable(g:save_window_file)
+  execute 'source' g:save_window_file
+endif
 
 "----------------------------------------
 " 追加
 "----------------------------------------
 
-" カラースキーム
-colorscheme landspace
+"IMEの状態をカラー表示
+if has('multi_byte_ime') || has('xim')
+    " 日本語入力ON時のカーソルの色を設定
+    highlight CursorIM guibg=Orange guifg=NONE
+endif
+"if has('multi_byte_ime')
+"  highlight Cursor guifg=NONE guibg=Green
+"  highlight CursorIM guifg=NONE guibg=Purple
+"endif
 
-set columns=220
-set lines=73
-set noexpandtab
-set tabstop=4
-set shiftwidth=4
+set columns=230
+set lines=76
 set confirm
 set diffopt-=filler
 
@@ -62,8 +74,10 @@ set diffopt-=filler
 "----------------------------------------
 
 "set imdisable
-"highlight ZenkakuSpace guibg=#000060
-highlight ZenkakuSpace guibg=#1f1f0f
+" 以下、初期動作のためにコメントアウトした。
+
+highlight ZenkakuSpace guibg=#000060
+"highlight ZenkakuSpace guibg=#1f1f0f
 match ZenkakuSpace /　/
 
 "----------------------------------------
@@ -78,4 +92,24 @@ set timeout timeoutlen=3000 ttimeoutlen=100
 "----------------------------------------
 " タブを自由に移動させる
 "----------------------------------------
+
+" 現在のタブを右へ移動
+nnoremap <Tab>n :MyTabMoveRight<CR>
+" 現在のタブを左へ移動
+nnoremap <Tab>p :MyTabMoveLeft<CR>
+"command! -count=1 MyTabMoveRight call MyTabMove(<count>)
+command! -count=2 MyTabMoveRight call MyTabMove(<count>)
+command! -count=1 MyTabMoveLeft  call MyTabMove(-<count>)
+function! MyTabMove(c)
+  let current = tabpagenr()
+  let max = tabpagenr('$')
+  let target = a:c > 1       ? current + a:c - line('.') :
+             \ a:c == 1      ? current :
+             \ a:c == -1     ? current - 2 :
+             \ a:c < -1      ? current + a:c + line('.') - 2 : 0
+  let target = target >= max ? target % max :
+             \ target < 0    ? target + max :
+             \ target
+  execute ':tabmove ' . target
+endfunction
 

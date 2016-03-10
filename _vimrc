@@ -1,6 +1,7 @@
 set nocompatible
 set encoding=utf-8
 set fileencodings=ucs-bom,iso-2022-jp,utf-8,cp932,euc-jp,default,latin
+set sessionoptions-=blank
 
 " $HOME が設定されていること。
 
@@ -12,19 +13,22 @@ elseif isdirectory($VIM . '\vimfiles')
   let $MY_VIMRUNTIME = $VIM.'\vimfiles'
 endif
 
-"set runtimepath+=$MY_VIMRUNTIME/qfixapp
+set runtimepath+=$MY_VIMRUNTIME/qfixapp
 silent! source $MY_VIMRUNTIME/pluginjp/encode.vim
 
 "----------------------------------------
 " システム設定
 "----------------------------------------
 
+set backupdir=$HOME/vimfiles/.vimbackup
+set undodir=$HOME/vimfiles/.vimundo
+set noswapfile
 set nowritebackup
 set nobackup
+"set clipboard=unnamed
 set clipboard=
 
 set nrformats-=octal
-set timeout timeoutlen=3000 ttimeout=100
 set hidden
 set history=50
 set formatoptions+=mM
@@ -59,8 +63,6 @@ set shellslash
 set number
 
 set showmatch matchtime=1
-set ts=4 sw=4 sts=4
-set smartindent
 
 set cinoptions+=:0
 set title
@@ -225,27 +227,12 @@ endfunction
 "全角スペースを表示
 "-----------------------------
 
-" コメント以外で全角スペースを指定しているので、scriptencodingと、
-" このファイルのエンコードが一致するよう注意！
-" 強調表示されない場合、ここでscriptencodingを指定するとうまくいく事があります。
-"scriptencoding cp932
-function! ZenkakuSpace()
-  silent! let hi = s:GetHighlight('ZenkakuSpace')
-  if hi =~ 'E411' || =~ 'cleared$'
-"  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
-  highlight ZenkakuSpace ctermfg=darkgrey guifg=darkgrey
-  endif
-endfunction
-
-if has('syntax')
-  augroup ZenkakuSpace
-    autocmd!
-    autocmd ColorScheme       * call ZenkakuSpace()
-    autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
-    autocmd VimEnter,WinEnter * match ZenkakuSpace '\%u3000'
-  augroup END
-  call ZenkakuSpace()
-endif
+augroup highlightIdegraphicSpace
+  autocmd! highlightIdegraphicSpace
+"  autocmd Colorscheme * highlight ZenkakuSpace term=underline ctermbg=lightblue guibg=darkgray
+  autocmd Colorscheme * highlight ZenkakuSpace term=underline ctermbg=lightblue guibg=lightblue
+  autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+augroup END
 
 "-----------------------------
 " grep,tagsのためカレントディレクトリをファイルと同じディレクトリに移動する
@@ -264,10 +251,10 @@ endif
 "----------------------------------------
 
 set nolist
-set directory=$HOME/.vimbackup
+set directory=$HOME/vimfiles/.vimbackup
 
 "----------------------------------------
-" misc
+" File Format
 "----------------------------------------
 
 function! CopyFilepath()
@@ -292,74 +279,147 @@ nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
 "----------------------------------------
 " PREVIEW
 "----------------------------------------
-set previewheight=32
+"set splitbelow
+"set splitright
+set previewheight=40
 
 "----------------------------------------
 " neobundle
 "----------------------------------------
-"set nocompatible
-"filetype off
-"
-"if has('vim_starting')
-"    set runtimepath+=~/.vim/bundle/neobundle.vim/
-"    call neobundle#rc(expand('~/.vim/bundle/'))
-"endif
-"
-"NeoBundle 'Shougo/neobundle.vim'
-"
-"filetype plugin on
-"filetype indent on
-
-"" Color Scheme
-"NeoBundle 'altercation/vim-colors-solarized'
-"
-"" Color Scheme Configure:
-"syntax enable
-"set background=dark
-"let g:solarized_termcolors=256
-"colorscheme solarized
-
-set nocompatible
-filetype off
-
-if has('vim_starting')
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
-  call neobundle#rc(expand('~/.vim/bundle/'))
+if &compatible
+  set nocompatible               " Be iMproved
 endif
+
+"set runtimepath^=~/.vim/bundle/neobundle.vim/
+set runtimepath+=~/.vim/bundle/neobundle.vim/
+call neobundle#begin(expand('~/.vim/bundle/'))
+
+NeoBundleFetch 'Shougo/neobundle.vim'
+
 " originalrepos on github
-NeoBundle 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neosnippet'
-NeoBundle 'Shougo/vimproc'
-"NeoBundle 'VimClojure'
-NeoBundle 'Shougo/vimshell'
-NeoBundle 'Shougo/neocomplcache'
-"NeoBundle 'jpalardy/vim-slime'
-"NeoBundle 'scrooloose/syntastic'
-""NeoBundle 'https://bitbucket.org/kovisoft/slimv'
+NeoBundle  'Shougo/vimfiler.vim'
+NeoBundle  'Shougo/unite.vim'
+NeoBundle  'Shougo/neocomplcache'
+NeoBundle  'Shougo/neomru.vim'
+NeoBundle  'Shougo/neosnippet'
+NeoBundle  'Shougo/neosnippet-snippets'
+NeoBundle  'Shougo/vimproc.vim', {
+\ 'build' : {
+\     'windows' : 'gmake -f make_mingw64.mak',
+\     'cygwin' : 'make -f make_cygwin.mak',
+\     'mac' : 'make',
+\     'linux' : 'make',
+\     'unix' : 'gmake',
+\    },
+\ }
+"\     'windows' : 'tools\\update-dll-mingw',
+NeoBundle  'Shougo/vimshell'
 
-NeoBundle  'itchyny/landscape.vim'
-"NeoBundle  'itchyny/lightline.vim'
-NeoBundle  'tyru/restart.vim'
-NeoBundle  'ujihisa/unite-colorscheme'
-NeoBundle  'deris/vim-diffbuf'
-NeoBundle  'xolox/vim-misc'
-NeoBundle  'xolox/vim-session'
 NeoBundle  'thinca/vim-singleton'
+NeoBundle  'xolox/vim-session', {
+             \ 'depends' : 'xolox/vim-misc',
+             \ }
 NeoBundle  'kana/vim-submode'
+NeoBundle  'deris/vim-diffbuf'
+NeoBundle  'tyru/restart.vim'
+NeoBundle  'spolu/dwm.vim'
 
-filetype plugin indent on     " required!
-filetype indent on
-syntax on
+NeoBundle  'plasticboy/vim-markdown'
+NeoBundle  'kannokanno/previm'
+
+"NeoBundle  'vim-pandoc/vim-pandoc'
+
+" Color Scheme
+NeoBundle  'ujihisa/unite-colorscheme'
+NeoBundle  'itchyny/lightline.vim'
+"NeoBundle  'itchyny/landscape.vim'
+NeoBundle  'altercation/vim-colors-solarized'
+NeoBundle  'nanotech/jellybeans.vim'
+NeoBundle  'cocopon/lightline-hybrid.vim'
+NeoBundle  'cocopon/colorswatch.vim'
+NeoBundle  'chriskempson/tomorrow-theme'
+NeoBundle  'w0ng/vim-hybrid'
+syntax enable
+set background=dark
+colorscheme hybrid
+
+call neobundle#end()
+filetype plugin indent on
+NeoBundleCheck
 
 "----------------------------------------
-" landscape.vim
+" singleton
 "----------------------------------------
-let g:landscape_highlight_url = 0
-let g:landscape_syntax_vimfiler = 1
-let g:landscape_syntax_unite = 1
-let g:landscape_syntax_quickrun = 1
-let g:unite_cursor_line_highlight = 'CursorLine'
+
+call singleton#enable()
+
+"----------------------------------------
+" lightline.vim
+"----------------------------------------
+ 
+" mode_map option
+"        \ 'mode_map': {'c': 'NORMAL'},
+
+let g:lightline = {
+        \ 'colorscheme': 'default',
+        \ 'mode_map': {'c': 'NORMAL'},
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+        \ },
+        \ 'component_function': {
+        \   'modified': 'LightLineModified',
+        \   'readonly': 'LightLineReadonly',
+        \   'fugitive': 'LightLineFugitive',
+        \   'filename': 'LightLineFilename',
+        \   'fileformat': 'LightLineFileformat',
+        \   'filetype': 'LightLineFiletype',
+        \   'fileencoding': 'LightLineFileencoding',
+        \   'mode': 'LightLineMode'
+        \ }
+        \ }
+
+function! LightLineModified()
+  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightLineReadonly()
+  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+endfunction
+
+function! LightLineFilename()
+  return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
+        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+endfunction
+
+function! LightLineFugitive()
+  try
+    if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+      return fugitive#head()
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! LightLineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightLineFiletype()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineFileencoding()
+  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! LightLineMode()
+  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
 
 "----------------------------------------
 " keymap
@@ -375,10 +435,10 @@ noremap <Space>e $
 noremap <Space>m %
 nnoremap <Space>/ *
 nnoremap <C-t> :<C-u>tabnew<CR>
-nnoremap <silent> <spce>hl :<C-u>nohlsearch<CR>
+nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
 
 " Visual Mark
-map <unique> ,s <Plug>Vm_goto_next_sign
+noremap <unique> ,s <Plug>Vm_goto_next_sign
 
 " 最後に貼り付けた箇所を選択
 nnoremap gc `[v`]
@@ -390,7 +450,7 @@ onoremap gc :<C-u>normal gc<CR>
 "----------------------------------------
 let g:unite_enable_start_insert = 1
 let g:unite_source_history_yank_enable = 1
-let g:unite_source_file_mru_limit = 150
+let g:unite_source_file_mru_limit = 50
 let g:unite_source_file_mru_time_format = ''
 let g:unite_source_file_mru_ignore_pattern = '.*\/$\|.*Application\ Data.*'
 
@@ -401,7 +461,7 @@ nnoremap <silent> [unite]h :<C-u>Unite history/yank<CR>
 nnoremap <silent> [unite]r :<C-u>Unite -buffer-name=register register<CR>
 
 nnoremap <silent> [unite]j :<C-u>Unite buffer -auto-preview<CR>
-nnoremap <silent> [unite]m :<C-u>Unite file_mru -auto-preview<CR>
+nnoremap <silent> [unite]m :<C-u>Unite buffer_tab file_mru -auto-preview<CR>
 nnoremap <silent> [unite]f :<C-u>Unite buffer file_mru -auto-preview<CR>
 nnoremap <silent> [unite]l :<C-u>Unite buffer -default-action=delete<CR>
 nnoremap <silent> [unite]d :<C-u>Unite directory_mru<CR>
@@ -439,7 +499,7 @@ nmap <space>f [vf]
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
 nnoremap <silent> [vf]e :<C-u>VimFilerBufferDir -quit<CR>
-nnoremap <silent> [vf]i :<C-u>VimFilerBufferDir -split -simple -winwidth=35 -no-quit<CR>
+nnoremap <silent> [vf]i :<C-u>VimFilerBufferDir -split -simple -winwidth=45 -toggle -no-quit<CR>
 
 augroup vimrc
   autocmd FileType vimfiler call s:vimfiler_my_settings()
@@ -452,7 +512,7 @@ endfunction
 "----------------------------------------
 " 移動カスタム
 "----------------------------------------
-" , の下の機能 (f, F, t, T での戻り)
+" , の元のの機能 (f, F, t, T での戻り)
 noremap \ ,
 
 "----------------------------------------
@@ -504,14 +564,15 @@ call submode#map('bufmove', 'n', '', '-', '<C-w>-')
 let QFixHowm_Key = ','
 let QFixHowm_KeyB = ','
 
-let howm_dir = 'c:/howm'
-let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
+let howm_dir = '~/Documents/howm'
+let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.md'
 let howm_fileencoding = &enc
 let howm_fileformat = 'dos'
 
 let QFixWin_EnableMode = 2
 let QFix_UseLocationList = 1
-let QFixHowm_FileType = 'conf.howm_memo.qfix_memo.markdown.markdown_custom'
+"let QFixHowm_FileType = 'conf.howm_memo.qfix_memo.markdown'
+let QFixHowm_FileType = 'qfix_memo'
 
 " サブメニューで表示するファイル名
 let SubWindow_Title = '~/.vim/__submenu__.howm'
@@ -544,7 +605,7 @@ let QFixHowm_DiaryFile = '%Y/%m/%Y-%m-000000'
 "----------------------------------------
 
 let QFixMRU_Entries = 50
-let QFixMRU_Filename = '~/.vim/.qfixmru'
+let QFixMRU_Filename = '~/vimfiles/.qfixmru'
 "let QFixMRU_IgnoreFile   = '/pairlink/'
 let QFixMRU_RegisterFile = '\.\(howm\|txt\|mkd\|wiki\)$'
 let QFixMRU_IgnoreTitle  = ':invisible'
@@ -576,7 +637,9 @@ let MyGrep_KeyB = ','
 let MyGrep_ExcludeReg = '[~#]$\|\.dll$\|\.exe$\|\.lnk$\|\.o$\|\.obj$\|\.pdf$\|\.xls$'
 
 " 使用するgrep(Unix)
-let mygrepprg = 'grep'
+"let mygrepprg = 'grep'
+"set grepprg=c:/usr/bin/grep\ -nH
+set grepprg=internal
 " 日本語が含まれる場合のgrep指定
 let myjpgrepprg = ''
 
@@ -611,11 +674,14 @@ set backupskip=/tmp/*,/private/tmp/*
 " Vim Session
 "----------------------------------------
 
-let s:local_session_directory = $HOME . '\.vimbackup'
+" 現在のディレクトリ直下の .vimsessions/ を取得 
+"let s:local_session_directory = xolox#misc#path#merge(getcwd(), '.vimsessions')
+let s:local_session_directory = expand('~/vimfiles/.vimsessions')
 if isdirectory(s:local_session_directory)
   let g:session_directory = s:local_session_directory
   let g:session_autosave = 'yes'
   let g:session_autoload = 'yes'
+"  let g:session_autosave_periodic = 1
 else
   let g:session_autosave = 'no'
   let g:session_autoload = 'no'
@@ -627,4 +693,186 @@ unlet s:local_session_directory
 "----------------------------------------
 
 let g:restart_command = 'RE'
-let g:restart_sessionoptions = 'buffers,curdir,folds,help,tabpages'
+let g:restart_sessionoptions = 'buffers,curdir,folds,help,localoptions,tabpages'
+
+"----------------------------------------
+" dwm.vim
+"----------------------------------------
+
+" dwm.vim 設定
+" original: c-j
+nnoremap <c-n> <c-w>w
+" original: c-k
+nnoremap <c-p> <c-w>W
+nmap <m-r> <Plug>DWMRotateCounterclockwise
+nmap <m-t> <Plug>DWMRotateClockwise
+nmap <c-o> <Plug>DWMNew
+nmap <c-c> <Plug>DWMClose
+nmap <c-@> <Plug>DWMFocus
+nmap <c-Space> <Plug>DWMFocus
+nmap <c-l> <Plug>DWMGrowMaster
+nmap <c-h> <Plug>DWMShrinkMaster
+ 
+" Unite 設定
+noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
+noremap zn :UniteWithBufferDir -buffer-name=files file file/new -auto-preview<CR>
+
+"----------------------------------------
+" Previm + vim-markdown
+"----------------------------------------
+
+let g:vim_markdown_folding_disabled = 1
+"set conceallevel=2
+
+augroup PrevimSettings
+    autocmd!
+    autocmd BufNewFile,BufRead *.{mkd} set filetype=markdown
+augroup END
+
+let g:previm_open_cmd = 'C:\\Program\ Files\ (x86)\\Google\\Chrome\\Application\\chrome.exe'
+nnoremap [previm] <Nop>
+nmap <Space>p [previm]
+nnoremap <silent> [previm]o :<C-u>PrevimOpen<CR>
+nnoremap <silent> [previm]r :call previm#refresh()<CR>
+
+command! PRE PrevimOpen
+
+"----------------------------------------
+" 長いファイル名の上限
+"----------------------------------------
+
+"" マルチバイト対応 strlen() と strpart()
+""" via http://vimwiki.net/?ScriptSample%2F16
+function! StringLength(str)
+  return strlen(substitute(a:str, ".", "x", "g"))
+endfunction
+
+function! StringPart(str, start, len)
+  let bend = byteidx(a:str, a:start + a:len) - byteidx(a:str, a:start)
+  if bend < 0
+    return strpart(a:str, byteidx(a:str, a:start))
+  else
+    return strpart(a:str, byteidx(a:str, a:start), bend)
+  endif
+endfunction
+
+function! GuiTabLabel()
+  let label = expand("%:t")
+  let length = StringLength(label)
+  if length > 20   "ファイル名が21文字以上の場合、末尾を切り詰めて20文字にする。
+    let label = StringPart(label, 0, 20) . ".."
+  endif
+
+  if length < 1
+    let label = 'おNEW'
+  endif
+
+  " タブ内にウィンドウが複数あるときにはその数を追加します
+  let l:label .= ' '
+  let l:wincount = tabpagewinnr(v:lnum, '$')
+  if l:wincount > 1
+    let l:label = l:wincount . ' ' . l:label 
+  endif
+
+  " このタブページに変更のあるバッファがるときには '+' を追加します
+  let l:bufnrlist = tabpagebuflist(v:lnum)
+  for bufnr in l:bufnrlist
+    if getbufvar(bufnr, "&modified")
+      let l:label .= '+'
+      break
+    endif
+  endfor
+
+  return label
+endfunction
+
+set guitablabel=%{GuiTabLabel()}
+
+"----------------------------------------
+" SyntaxInfo
+"----------------------------------------
+
+function! s:get_syn_id(transparent)
+  let synid = synID(line("."), col("."), 1)
+  if a:transparent
+    return synIDtrans(synid)
+  else
+    return synid
+  endif
+endfunction
+function! s:get_syn_attr(synid)
+  let name = synIDattr(a:synid, "name")
+  let ctermfg = synIDattr(a:synid, "fg", "cterm")
+  let ctermbg = synIDattr(a:synid, "bg", "cterm")
+  let guifg = synIDattr(a:synid, "fg", "gui")
+  let guibg = synIDattr(a:synid, "bg", "gui")
+  return {
+        \ "name": name,
+        \ "ctermfg": ctermfg,
+        \ "ctermbg": ctermbg,
+        \ "guifg": guifg,
+        \ "guibg": guibg}
+endfunction
+function! s:get_syn_info()
+  let baseSyn = s:get_syn_attr(s:get_syn_id(0))
+  echo "name: " . baseSyn.name .
+        \ " ctermfg: " . baseSyn.ctermfg .
+        \ " ctermbg: " . baseSyn.ctermbg .
+        \ " guifg: " . baseSyn.guifg .
+        \ " guibg: " . baseSyn.guibg
+  let linkedSyn = s:get_syn_attr(s:get_syn_id(1))
+  echo "link to"
+  echo "name: " . linkedSyn.name .
+        \ " ctermfg: " . linkedSyn.ctermfg .
+        \ " ctermbg: " . linkedSyn.ctermbg .
+        \ " guifg: " . linkedSyn.guifg .
+        \ " guibg: " . linkedSyn.guibg
+endfunction
+command! SyntaxInfo call s:get_syn_info()
+
+"----------------------------------------
+" Modify Color Scheme
+"----------------------------------------
+
+autocmd ColorScheme * highlight vimLineComment guifg=#a9a9a9
+autocmd ColorScheme * highlight Comment guifg=#a9a9a9
+
+"----------------------------------------
+" Modify tab
+"----------------------------------------
+
+"set noexpandtab
+set expandtab
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+augroup fileTypeIndent
+    autocmd!
+    autocmd BufNewFile,BufRead *.sh setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.py setlocal tabstop=4 softtabstop=4 shiftwidth=4
+    autocmd BufNewFile,BufRead *.rb setlocal tabstop=2 softtabstop=2 shiftwidth=2
+augroup END
+
+"----------------------------------------
+" VimShell
+"----------------------------------------
+
+nnoremap <silent> ,vs :VimShell<CR>
+" pythonを非同期で起動
+nnoremap <silent> ,vpy :VimShellInteractive python<CR>
+" irbを非同期で起動
+nnoremap <silent> ,vrb :VimShellInteractive irb<CR>
+" 非同期で開いたインタプリタに現在の行を評価させる
+vmap <silent> ,ss :VimShellSendString<CR>
+" 選択中に: 非同期で開いたインタプリタに選択行を評価させる
+nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
+
+"----------------------------------------
+" for VimFiler
+"----------------------------------------
+
+cd ~
+
