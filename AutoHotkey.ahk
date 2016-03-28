@@ -10,6 +10,20 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;; Target Application
 ;; -------------------------------------------------- 
 
+is_MCalc()
+{
+  IfWinActive,ahk_exe MCalc.exe
+    Return 1
+  Return 0
+}
+
+is_rlogin()
+{
+  IfWinActive,ahk_exe RLogin.exe
+    Return 1
+  Return 0
+}
+
 is_vbox()
 {
   IfWinActive,ahk_exe VirtualBox.exe
@@ -235,6 +249,8 @@ alt_arrow()
 
 is_NPEnable()
 {
+  If is_MCalc()
+    Return 1
   If is_slack()
     Return 1
   If is_te()
@@ -358,7 +374,7 @@ Return
 +!]::
   If (is_tabs() || is_browser())
     Send ^{TAB}
-  Else If is_vim()
+  Else If (is_vim() || is_putty() || is_rlogin())
     Send {ESC}gt
   Else If is_excel()
     Send ^{PgDn}
@@ -369,7 +385,7 @@ Return
 +![::
   If (is_tabs() || is_browser())
     Send +^{TAB}
-  Else If is_vim()
+  Else If (is_vim() || is_putty() || is_rlogin())
     Send {ESC}gT
   Else If is_excel()
     Send ^{PgUp}

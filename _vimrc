@@ -39,6 +39,9 @@ set wildmenu
 if has('mouse')
   set mouse=a
 endif
+if has('unix')
+  set t_Co=256
+endif
 
 "----------------------------------------
 " 検索
@@ -324,8 +327,8 @@ NeoBundle  'deris/vim-diffbuf'
 NeoBundle  'tyru/restart.vim'
 NeoBundle  'spolu/dwm.vim'
 
-NeoBundle  'plasticboy/vim-markdown'
-NeoBundle  'kannokanno/previm'
+"NeoBundle  'plasticboy/vim-markdown'
+"NeoBundle  'kannokanno/previm'
 
 "NeoBundle  'vim-pandoc/vim-pandoc'
 
@@ -434,7 +437,7 @@ noremap <Space>l $
 noremap <Space>e $
 noremap <Space>m %
 nnoremap <Space>/ *
-nnoremap <C-t> :<C-u>tabnew<CR>
+"nnoremap <C-t> :<C-u>tabnew<CR>
 nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
 
 " Visual Mark
@@ -565,7 +568,7 @@ let QFixHowm_Key = ','
 let QFixHowm_KeyB = ','
 
 let howm_dir = '~/Documents/howm'
-let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.md'
+let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
 let howm_fileencoding = &enc
 let howm_fileformat = 'dos'
 
@@ -721,21 +724,21 @@ noremap zn :UniteWithBufferDir -buffer-name=files file file/new -auto-preview<CR
 " Previm + vim-markdown
 "----------------------------------------
 
-let g:vim_markdown_folding_disabled = 1
-"set conceallevel=2
-
-augroup PrevimSettings
-    autocmd!
-    autocmd BufNewFile,BufRead *.{mkd} set filetype=markdown
-augroup END
-
-let g:previm_open_cmd = 'C:\\Program\ Files\ (x86)\\Google\\Chrome\\Application\\chrome.exe'
-nnoremap [previm] <Nop>
-nmap <Space>p [previm]
-nnoremap <silent> [previm]o :<C-u>PrevimOpen<CR>
-nnoremap <silent> [previm]r :call previm#refresh()<CR>
-
-command! PRE PrevimOpen
+"let g:vim_markdown_folding_disabled = 1
+""set conceallevel=2
+"
+"augroup PrevimSettings
+"    autocmd!
+"    autocmd BufNewFile,BufRead *.{mkd} set filetype=markdown
+"augroup END
+"
+"let g:previm_open_cmd = 'C:\\Program\ Files\ (x86)\\Google\\Chrome\\Application\\chrome.exe'
+"nnoremap [previm] <Nop>
+"nmap <Space>p [previm]
+"nnoremap <silent> [previm]o :<C-u>PrevimOpen<CR>
+"nnoremap <silent> [previm]r :call previm#refresh()<CR>
+"
+"command! PRE PrevimOpen
 
 "----------------------------------------
 " 長いファイル名の上限
@@ -869,6 +872,32 @@ nnoremap <silent> ,vrb :VimShellInteractive irb<CR>
 vmap <silent> ,ss :VimShellSendString<CR>
 " 選択中に: 非同期で開いたインタプリタに選択行を評価させる
 nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
+
+"----------------------------------------
+" for Meta Key (via Terminal only)
+"----------------------------------------
+
+"let c = 'a'
+"while c <= 'z'
+"    execute "set <M-" . c . ">=\e" . c
+"    execute "imap \e" . c . " <M-" . c . ">"
+"    execute "set <M-S-" . c . ">=\e" . toupper(c)
+"    execute "imap \e" . toupper(c) . " <M-" . c . ">"
+"    let c = nr2char(1+char2nr(c))
+"endw
+"
+" 特定のキー（r）にだけ適用する場合
+" set <M-r>=[C-v を押す][Alt-r を押す]
+" imap [C-v を押す][Esc を押す]r <M-r>
+"set <M-r>=o
+"imap r <M-r>
+"set <M-t>=o
+"imap t <M-t>
+
+"----------------------------------------
+" Multibyte
+"----------------------------------------
+set ambiwidth=double
 
 "----------------------------------------
 " for VimFiler

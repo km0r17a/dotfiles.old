@@ -16,6 +16,10 @@ is_pre_spc = 0
 ; (Please comment out applications you don't use)
 is_target()
 {
+  If is_eclipse()
+    Return 1 
+  If is_rlogin()
+    Return 1 
   If is_vbox()
     Return 1 
   If is_powerpoint()
@@ -49,8 +53,8 @@ is_target()
     Return 1
   IfWinActive,ahk_class GVim ; GVIM
     Return 1
-  IfWinActive,ahk_class SWT_Window0 ; Eclipse
-    Return 1
+;  IfWinActive,ahk_class SWT_Window0 ; Eclipse
+;    Return 1
 ;   IfWinActive,ahk_class Xming X
 ;     Return 1
 ;   IfWinActive,ahk_class SunAwtFrame
@@ -301,7 +305,7 @@ scroll_down()
   Return
 
 ^h::
-  If (is_excel() || is_console())
+  If (is_excel() || is_console() || is_eclipse())
     delete_backward_char()
   Else If is_target()
     Send %A_ThisHotkey%

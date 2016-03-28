@@ -24,9 +24,19 @@ set guioptions-=l
 set guioptions-=L
 
 "フォント設定
+set printfont=MS_Mincho:h10:cSHIFTJIS
 set guifont=MS_Gothic:h10:cSHIFTJIS
 set guifontwide=MS_Gothic:h10:cSHIFTJIS
-set printfont=MS_Mincho:h10:cSHIFTJIS
+" set guifont=Ricty_Diminished_Discord:h11:cSHIFTJIS
+" set guifontwide=Ricty_Diminished_Discord:h11:cSHIFTJIS
+" set guifont=Myrica_M:h11:cSHIFTJIS
+" set guifontwide=Myrica_M:h11:cSHIFTJIS
+
+"let s:using_font= 'Osaka' . "\x81\x7c\x93\x99\x95\x9d"
+"let &guifont=s:using_font . ':h15:cSHIFTJIS'
+"unlet s:using_font"
+"
+"set linespace=0
 
 "----------------------------------------
 " window position
@@ -55,10 +65,12 @@ endif
 "----------------------------------------
 
 "IMEの状態をカラー表示
-if has('multi_byte_ime') || has('xim')
+"if has('multi_byte_ime') || has('xim')
+if has('multi_byte_ime')
     " 日本語入力ON時のカーソルの色を設定
     highlight CursorIM guibg=Orange guifg=NONE
 endif
+
 "if has('multi_byte_ime')
 "  highlight Cursor guifg=NONE guibg=Green
 "  highlight CursorIM guifg=NONE guibg=Purple
