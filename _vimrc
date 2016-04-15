@@ -342,13 +342,32 @@ NeoBundle  'cocopon/lightline-hybrid.vim'
 NeoBundle  'cocopon/colorswatch.vim'
 NeoBundle  'chriskempson/tomorrow-theme'
 NeoBundle  'w0ng/vim-hybrid'
-syntax enable
-set background=dark
-colorscheme hybrid
+
+NeoBundle  'Shougo/neocomplete.vim'
+NeoBundle  'scrooloose/syntastic'
+
+NeoBundle  'thinca/vim-ref'
+NeoBundle  'yuku-t/vim-ref-ri'
+
+NeoBundle  'szw/vim-tags'
+NeoBundle  'tpope/vim-endwise'
+NeoBundle  'tpope/vim-endwise'
+
+"NeoBundle  'dyng/ctrlsf.vim'
+NeoBundle  'rking/ag.vim'
+
+NeoBundle  'elzr/vim-json'
+
+NeoBundle  'osyo-manga/vim-anzu'
+NeoBundle  'haya14busa/vim-asterisk'
 
 call neobundle#end()
 filetype plugin indent on
 NeoBundleCheck
+
+syntax on
+set background=dark
+colorscheme hybrid
 
 "----------------------------------------
 " singleton
@@ -655,7 +674,7 @@ let MyGrep_FileEncoding = ''
 
 " 検索ディレクトリはカレントディレクトリを基点にする
 " 0なら現在開いているファイルの存在するディレクトリを基点
-let MyGrep_CurrentDirMode = 1
+let MyGrep_CurrentDirMode = 0
 
 " 「だめ文字」対策を有効/無効
 let MyGrep_Damemoji = 2
@@ -703,18 +722,26 @@ let g:restart_sessionoptions = 'buffers,curdir,folds,help,localoptions,tabpages'
 "----------------------------------------
 
 " dwm.vim 設定
-" original: c-j
-nnoremap <c-n> <c-w>w
-" original: c-k
-nnoremap <c-p> <c-w>W
-nmap <m-r> <Plug>DWMRotateCounterclockwise
-nmap <m-t> <Plug>DWMRotateClockwise
-nmap <c-o> <Plug>DWMNew
+"nnoremap <c-n> <c-w>w
+"nnoremap <c-p> <c-w>W
+"nmap <m-r> <Plug>DWMRotateCounterclockwise
+"nmap <m-t> <Plug>DWMRotateClockwise
+"nmap <c-o> <Plug>DWMNew
+"nmap <c-n> <Plug>DWMNew
+"nmap <c-c> <Plug>DWMClose
+"nmap <c-Space> <Plug>DWMFocus
+"nmap <c-l> <Plug>DWMGrowMaster
+"nmap <c-h> <Plug>DWMShrinkMaster
+
+nnoremap <m-t> <c-w>w
+nnoremap <m-r> <c-w>W
+nmap <c-h> <Plug>DWMRotateCounterclockwise
+nmap <c-l> <Plug>DWMRotateClockwise
+nmap <c-n> <Plug>DWMNew
 nmap <c-c> <Plug>DWMClose
-nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
-nmap <c-l> <Plug>DWMGrowMaster
-nmap <c-h> <Plug>DWMShrinkMaster
+nmap <c-@> <Plug>DWMGrowMaster
+nmap <c-#> <Plug>DWMShrinkMaster
  
 " Unite 設定
 noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
@@ -895,9 +922,66 @@ nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
 "imap t <M-t>
 
 "----------------------------------------
-" Multibyte
+" ag + ctrlsf
 "----------------------------------------
-set ambiwidth=double
+
+"let g:ctrlsf_context = '-C 2'
+
+"----------------------------------------
+" for jq
+"----------------------------------------
+
+let g:vim_json_syntax_conceal = 0
+
+if executable('jq')
+  function! s:jq(has_bang, ...) abort range
+    execute 'silent' a:firstline ',' a:lastline '!jq' string(a:0 == 0 ? '.' : a:1)
+    if !v:shell_error || a:has_bang
+      return
+    endif
+    let error_lines = filter(getline('1', '$'), 'v:val =~# "^parse error: "')
+    " 範囲指定している場合のために，行番号を置き換える
+    let error_lines = map(error_lines, 'substitute(v:val, "line \\zs\\(\\d\\+\\)\\ze,", "\\=(submatch(1) + a:firstline - 1)", "")')
+    let winheight = len(error_lines) > 10 ? 10 : len(error_lines)
+    " カレントバッファがエラーメッセージになっているので，元に戻す
+    undo
+    " カレントバッファの下に新たにウィンドウを作り，エラーメッセージを表示するバッファを作成する
+    execute 'botright' winheight 'new'
+    setlocal nobuflisted bufhidden=unload buftype=nofile
+    call setline(1, error_lines)
+    " エラーメッセージ用バッファのundo履歴を削除(エラーメッセージをundoで消去しないため)
+    let save_undolevels = &l:undolevels
+    setlocal undolevels=-1
+    execute "normal! a \<BS>\<Esc>"
+    setlocal nomodified
+    let &l:undolevels = save_undolevels
+    " エラーメッセージ用バッファは読み取り専用にしておく
+    setlocal readonly
+  endfunction
+  command! -bar -bang -range=% -nargs=? Jq <line1>,<line2>call s:jq(<bang>0, <f-args>)
+endif
+
+"----------------------------------------
+" asterisk.vim + anzu.vim
+"----------------------------------------
+
+nmap n <Plug>(anzu-n-with-echo)
+nmap N <Plug>(anzu-N-with-echo)
+"nmap * <Plug>(anzu-star-with-echo)
+"nmap # <Plug>(anzu-sharp-with-echo)
+
+nmap * <Plug>(asterisk-z*)<Plug>(anzu-update-search-status-with-echo)
+nmap #   <Plug>(asterisk-#)<Plug>(anzu-update-search-status-with-echo)
+map g*  <Plug>(asterisk-g*)
+map g#  <Plug>(asterisk-g#)
+map z*  <Plug>(asterisk-z*)
+map gz* <Plug>(asterisk-gz*)
+map z#  <Plug>(asterisk-z#)
+map gz# <Plug>(asterisk-gz#)
+let g:asterisk#keeppos = 1
+
+" statusline
+set statusline=%{anzu#search_status()}
 
 "----------------------------------------
 " for VimFiler

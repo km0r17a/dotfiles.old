@@ -129,9 +129,11 @@ syn match qfixmemoCodeSpace display "^    .*"
 "syn match qfixmemoDelimiter '^```\s*[[:alnum:]]*$'
 syn match qfixmemoDelimiter '^```\s*.*$'
 
-hi def link qfixmemoCode         Comment
+"hi def link qfixmemoCode         Comment
+hi def link qfixmemoCode         PreProc
 "hi def link qfixmemoCodeSpace    Comment
-highlight qfixmemoCodeSpace guifg=#d0e4ee
+"highlight qfixmemoCodeSpace guifg=#d0e4ee
+hi def link qfixmemoCodeSpace PreProc
 hi def link qfixmemoDelimiter    DiffText
 
 "----------------------------------------------------
@@ -153,7 +155,8 @@ syn region	myConfString	start=+'+ skip=+\\\\\|\\'+ end=+'+ oneline
 hi def link myConfString	String
 
 syn region myArrows start='[→↓←↑⇒]' end='$' keepend
-highlight myArrows guifg=#d0e4ee
+"highlight myArrows guifg=#d0e4ee
+hi def link myArrows PreProc
 
 syn match myTitle '\(■\|□\|◆\|◇\)'
 "hi def link myTitle Title

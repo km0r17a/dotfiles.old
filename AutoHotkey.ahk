@@ -151,6 +151,8 @@ is_ie()
 
 is_eclipse()
 {
+  IfWinActive,ahk_class #32770
+    Return 1
   IfWinActive,ahk_class SWT_Window0
     Return 1
   Return 0
@@ -427,6 +429,13 @@ Return
 ;  If is_key_hook()
 ;    Send {Right}
 ;  Return
+
+>!j::Send {Down}
+>!k::Send {Up}
+>!h::Send {Left}
+>!l::Send {Right}
+>!;::Send {BS}
+>!'::Send {Enter}
 
 ;; -------------------------------------------------- 
 ;; Indivudual Settings

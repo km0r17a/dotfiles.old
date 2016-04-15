@@ -24,18 +24,27 @@ set guioptions-=l
 set guioptions-=L
 
 "フォント設定
-set printfont=MS_Mincho:h10:cSHIFTJIS
-set guifont=MS_Gothic:h10:cSHIFTJIS
-set guifontwide=MS_Gothic:h10:cSHIFTJIS
-" set guifont=Ricty_Diminished_Discord:h11:cSHIFTJIS
-" set guifontwide=Ricty_Diminished_Discord:h11:cSHIFTJIS
+set printfont=MS_Mincho:h10
+set ambiwidth=double
+
+"set guifont=MS_Gothic:h10
+"set guifontwide=MS_Gothic:h10
+
+set guifont=Myrica_M:h12
+set guifontwide=Myrica_M:h12
+
+"set guifont=Ricty_Diminished_Discord:h12
+"set guifontwide=Ricty_Diminished_Discord:h12
+
 " set guifont=Myrica_M:h11:cSHIFTJIS
 " set guifontwide=Myrica_M:h11:cSHIFTJIS
+" set guifont=Rounded-L_Mgen+_1mn:h11:cSHIFTJIS
+" set guifontwide=Rounded-L_Mgen+_1mn:h11:cSHIFTJIS
 
 "let s:using_font= 'Osaka' . "\x81\x7c\x93\x99\x95\x9d"
-"let &guifont=s:using_font . ':h15:cSHIFTJIS'
-"unlet s:using_font"
-"
+"let &guifont=s:using_font . ':h12'
+"unlet s:using_font
+
 "set linespace=0
 
 "----------------------------------------
@@ -76,8 +85,11 @@ endif
 "  highlight CursorIM guifg=NONE guibg=Purple
 "endif
 
-set columns=230
-set lines=76
+"set columns=230
+"set lines=76
+set columns=201
+set lines=70
+
 set confirm
 set diffopt-=filler
 
