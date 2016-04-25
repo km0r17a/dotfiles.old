@@ -754,14 +754,15 @@ let g:restart_sessionoptions = 'buffers,curdir,folds,help,localoptions,tabpages'
 "nmap <c-h> <Plug>DWMShrinkMaster
  
 nnoremap <m-t> <c-w>w
-nnoremap <m-n> <c-w>W
+nnoremap <m-r> <c-w>W
 nmap <c-h> <Plug>DWMRotateCounterclockwise
 nmap <c-l> <Plug>DWMRotateClockwise
 nmap <c-n> <Plug>DWMNew
 nmap <c-c> <Plug>DWMClose
+nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
-nmap <c-@> <Plug>DWMGrowMaster
-nmap <c-#> <Plug>DWMShrinkMaster
+nmap <c-q> <Plug>DWMGrowMaster  " set cmd 'stty -ixon' in your .bashrc
+nmap <c-z> <Plug>DWMShrinkMaster
 
 " Unite 設定
 noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
@@ -903,6 +904,8 @@ set softtabstop=4
 
 augroup fileTypeIndent
     autocmd!
+    autocmd BufNewFile,BufRead *.jsx setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.js setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd BufNewFile,BufRead *.sh setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd BufNewFile,BufRead *.py setlocal tabstop=4 softtabstop=4 shiftwidth=4
     autocmd BufNewFile,BufRead *.rb setlocal tabstop=2 softtabstop=2 shiftwidth=2
