@@ -284,7 +284,7 @@ nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
 "----------------------------------------
 "set splitbelow
 "set splitright
-set previewheight=40
+set previewheight=25
 
 "----------------------------------------
 " neobundle
@@ -541,23 +541,23 @@ noremap \ ,
 " 画面分割とタブ操作
 "----------------------------------------
 nnoremap s <Nop>
-nnoremap sj <C-w>j
-nnoremap sk <C-w>k
-nnoremap sl <C-w>l
-nnoremap sh <C-w>h
-nnoremap sJ <C-w>J
-nnoremap sK <C-w>K
-nnoremap sL <C-w>L
-nnoremap sH <C-w>H
+"nnoremap sj <C-w>j
+"nnoremap sk <C-w>k
+"nnoremap sl <C-w>l
+"nnoremap sh <C-w>h
+"nnoremap sJ <C-w>J
+"nnoremap sK <C-w>K
+"nnoremap sL <C-w>L
+"nnoremap sH <C-w>H
 nnoremap sn gt
 nnoremap sp gT
-nnoremap sr <C-w>r
+"nnoremap sr <C-w>r
 nnoremap s= <C-w>=
-nnoremap sw <C-w>w
-nnoremap so <C-w>_<C-w>|
+"nnoremap sw <C-w>w
+"nnoremap so <C-w>_<C-w>|
 nnoremap sO <C-w>=
-nnoremap sN :<C-u>bn<CR>
-nnoremap sP :<C-u>bp<CR>
+"nnoremap sN :<C-u>bn<CR>
+"nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
@@ -739,9 +739,10 @@ nmap <c-h> <Plug>DWMRotateCounterclockwise
 nmap <c-l> <Plug>DWMRotateClockwise
 nmap <c-n> <Plug>DWMNew
 nmap <c-c> <Plug>DWMClose
+nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
-nmap <c-@> <Plug>DWMGrowMaster
-nmap <c-#> <Plug>DWMShrinkMaster
+nmap <c-q> <Plug>DWMGrowMaster
+nmap <c-z> <Plug>DWMShrinkMaster
  
 " Unite 設定
 noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
@@ -881,6 +882,8 @@ set softtabstop=4
 
 augroup fileTypeIndent
     autocmd!
+    autocmd BufNewFile,BufRead *.js setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.jsx setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd BufNewFile,BufRead *.sh setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd BufNewFile,BufRead *.py setlocal tabstop=4 softtabstop=4 shiftwidth=4
     autocmd BufNewFile,BufRead *.rb setlocal tabstop=2 softtabstop=2 shiftwidth=2

@@ -137,3 +137,9 @@ function! MyTabMove(c)
   execute ':tabmove ' . target
 endfunction
 
+"----------------------------------------
+" 透過でござる
+"----------------------------------------
+
+autocmd GUIEnter * set transparency=238
+
