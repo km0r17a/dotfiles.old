@@ -363,6 +363,12 @@ NeoBundle 'elzr/vim-json'
 NeoBundle 'osyo-manga/vim-anzu'
 NeoBundle 'haya14busa/vim-asterisk'
 
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'othree/html5.vim'
+NeoBundle 'mattn/emmet-vim'
+
 call neobundle#end()
 filetype plugin indent on
 NeoBundleCheck
@@ -388,6 +394,7 @@ colorscheme hybrid
 " mode_map option
 "        \ 'mode_map': {'c': 'NORMAL'},
 
+" default color
 let g:lightline = {
         \ 'colorscheme': 'default',
         \ 'mode_map': {'c': 'NORMAL'},
@@ -405,6 +412,9 @@ let g:lightline = {
         \   'mode': 'LightLineMode'
         \ }
         \ }
+"let g:lightline = {
+"        \ 'colorscheme': 'hybrid',
+"        \ }
 
 function! LightLineModified()
   return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
@@ -466,7 +476,7 @@ noremap <Space>l $
 noremap <Space>e $
 noremap <Space>m %
 nnoremap <Space>/ *
-nnoremap <silent> ,hl :<C-u>nohlsearch<CR>
+nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
 
 "----------------------------------------
 " Unite.vim
@@ -541,6 +551,7 @@ noremap \ ,
 "----------------------------------------
 " 画面分割とタブ操作
 "----------------------------------------
+
 nnoremap s <Nop>
 nnoremap sn gt
 nnoremap sp gT
@@ -781,8 +792,8 @@ command! SyntaxInfo call s:get_syn_info()
 " Modify tab
 "----------------------------------------
 
-"set noexpandtab
-set expandtab
+set noexpandtab
+"set expandtab
 set autoindent
 set smartindent
 set tabstop=4
@@ -924,4 +935,30 @@ let g:asterisk#keeppos = 1
 
 " statusline
 set statusline=%{anzu#search_status()}
+
+"----------------------------------------
+" Syntastic
+"----------------------------------------
+
+let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute \"ng-"]
+let g:syntastic_check_on_open=0 "ファイルを開いたときはチェックしない
+let g:syntastic_check_on_save=1 "保存時にはチェック
+let g:syntastic_check_on_wq = 0 " wqではチェックしない
+let g:syntastic_auto_loc_list=0 "エラーがあったら自動でロケーションリストを開く
+let g:syntastic_loc_list_height=6 "エラー表示ウィンドウの高さ
+set statusline+=%#warningmsg# "エラーメッセージの書式
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_javascript_checkers = ['eslint'] "ESLintを使う
+let g:syntastic_mode_map = {
+      \ 'mode': 'active',
+      \ 'active_filetypes': ['javascript'],
+      \ 'passive_filetypes': []
+      \ }
+
+"----------------------------------------
+" Emmet-vim
+"----------------------------------------
+
+let g:user_emmet_leader_key='<c-e>'
 
