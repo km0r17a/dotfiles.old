@@ -16,6 +16,8 @@ is_pre_spc = 0
 ; (Please comment out applications you don't use)
 is_target()
 {
+  If is_Intellij()
+    Return 1 
   If is_eclipse()
     Return 1 
   If is_rlogin()
@@ -33,8 +35,6 @@ is_target()
   If is_bandZip()
     Return 1 
   IfWinActive,ahk_class FFFTPWin
-    Return 1 
-  IfWinActive,ahk_class #32770
     Return 1 
   IfWinActive,ahk_class mintty
     Return 1 
@@ -305,7 +305,7 @@ scroll_down()
   Return
 
 ^h::
-  If (is_excel() || is_console() || is_eclipse())
+  If (is_excel() || is_console() || is_eclipse() || is_Intellij())
     delete_backward_char()
   Else If is_target()
     Send %A_ThisHotkey%
@@ -450,20 +450,20 @@ LCtrl & vk20sc039::
       backward_char()
   Return
 
-^c::
-  Send %A_ThisHotkey%
-  global is_pre_spc = 0
-  Return
-
-^x::
-  Send %A_ThisHotkey%
-  global is_pre_spc = 0
-  Return
-
-^v::
-  Send %A_ThisHotkey%
-  global is_pre_spc = 0
-  Return
+;^c::
+;  Send %A_ThisHotkey%
+;  global is_pre_spc = 0
+;  Return
+;
+;^x::
+;  Send %A_ThisHotkey%
+;  global is_pre_spc = 0
+;  Return
+;
+;^v::
+;  Send %A_ThisHotkey%
+;  global is_pre_spc = 0
+;  Return
 
 !v::
   If (is_vim() || is_putty() || is_vbox())
@@ -475,17 +475,17 @@ LCtrl & vk20sc039::
     Send %A_ThisHotkey%
   Return
 
-^z::
-  Send %A_ThisHotkey%
-  global is_pre_spc = 0
-  Return
+;^z::
+;  Send %A_ThisHotkey%
+;  global is_pre_spc = 0
+;  Return
 
-<^<!s::
-  If is_office()
-    newSave()
-  Else
-    Send %A_ThisHotkey%
-  Return
+;<^<!s::
+;  If is_office()
+;    newSave()
+;  Else
+;    Send %A_ThisHotkey%
+;  Return
 
 <+<#vkBCsc033::
   If is_target()
@@ -516,12 +516,20 @@ LCtrl & vk20sc039::
     Send %A_ThisHotkey%
   Return
 
-<!l::
-  If (is_explorer() || is_xf() || is_te())
-    Send !d
-  Else If is_browser()
-    Send ^l
-  Else
-    Send %A_ThisHotkey%
-  Return
+; (is_explorer() || is_xf() || is_te())
+#IF WinActive("ahk_exe explorer.exe")
+<!l::Send !d
+#IF
+#IF WinActive("ahk_class TablacusExplorer")
+<!l::Send !d
+#IF
+#IF WinActive("ahk_class IEFrame")
+<!l::Send ^l
+#IF
+#IF WinActive("ahk_class Chrome_WidgetWin_0")
+<!l::Send ^l
+#IF
+#IF WinActive("ahk_class Chrome_WidgetWin_1")
+<!l::Send ^l
+#IF
 

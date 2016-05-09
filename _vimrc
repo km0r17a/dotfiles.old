@@ -302,7 +302,6 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " originalrepos on github
 NeoBundle  'Shougo/vimfiler.vim'
 NeoBundle  'Shougo/unite.vim'
-NeoBundle  'Shougo/neocomplcache'
 NeoBundle  'Shougo/neomru.vim'
 NeoBundle  'Shougo/neosnippet'
 NeoBundle  'Shougo/neosnippet-snippets'
@@ -318,48 +317,121 @@ NeoBundle  'Shougo/vimproc.vim', {
 "\     'windows' : 'tools\\update-dll-mingw',
 NeoBundle  'Shougo/vimshell'
 
-NeoBundle  'thinca/vim-singleton'
+if has('win64')
+  NeoBundle  'thinca/vim-singleton'
+endif
 NeoBundle  'xolox/vim-session', {
              \ 'depends' : 'xolox/vim-misc',
              \ }
 NeoBundle  'kana/vim-submode'
 NeoBundle  'deris/vim-diffbuf'
-NeoBundle  'tyru/restart.vim'
 NeoBundle  'spolu/dwm.vim'
-
-"NeoBundle  'plasticboy/vim-markdown'
-"NeoBundle  'kannokanno/previm'
-
-"NeoBundle  'vim-pandoc/vim-pandoc'
 
 " Color Scheme
 NeoBundle  'ujihisa/unite-colorscheme'
 NeoBundle  'itchyny/lightline.vim'
-"NeoBundle  'itchyny/landscape.vim'
-NeoBundle  'altercation/vim-colors-solarized'
-NeoBundle  'nanotech/jellybeans.vim'
-NeoBundle  'cocopon/lightline-hybrid.vim'
-NeoBundle  'cocopon/colorswatch.vim'
-NeoBundle  'chriskempson/tomorrow-theme'
 NeoBundle  'w0ng/vim-hybrid'
+NeoBundle  'cocopon/lightline-hybrid.vim'
 
-NeoBundle  'Shougo/neocomplete.vim'
-NeoBundle  'scrooloose/syntastic'
+" 静的解析
+NeoBundle 'scrooloose/syntastic'
 
-NeoBundle  'thinca/vim-ref'
-NeoBundle  'yuku-t/vim-ref-ri'
+" ドキュメント参照
+"NeoBundle 'thinca/vim-ref'
+NeoBundle 'yuku-t/vim-ref-ri'
 
-NeoBundle  'szw/vim-tags'
-NeoBundle  'tpope/vim-endwise'
-NeoBundle  'tpope/vim-endwise'
+" メソッド定義元へのジャンプ
+NeoBundle 'szw/vim-tags'
 
-"NeoBundle  'dyng/ctrlsf.vim'
-NeoBundle  'rking/ag.vim'
+" 自動で閉じる
+NeoBundle 'tpope/vim-endwise'
 
-NeoBundle  'elzr/vim-json'
+NeoBundle 'tpope/vim-unimpaired'
 
-NeoBundle  'osyo-manga/vim-anzu'
-NeoBundle  'haya14busa/vim-asterisk'
+" for ag
+NeoBundle 'dyng/ctrlsf.vim'
+NeoBundle 'rking/ag.vim'
+
+NeoBundle 'elzr/vim-json'
+
+NeoBundle 'osyo-manga/vim-anzu'
+NeoBundle 'haya14busa/vim-asterisk'
+
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'othree/html5.vim'
+NeoBundle 'mattn/emmet-vim'
+
+NeoBundleLazy 'pangloss/vim-javascript', {'filetypes': ['html', 'php', 'javascript']}
+NeoBundleLazy 'vim-scripts/taglist.vim', {'commands': 'Tlist'}
+NeoBundleLazy 'Shougo/neocomplete.vim', {'depends': ['KazuakiM/neosnippet-snippets', 'Shougo/neosnippet.vim', 'Shougo/neoinclude.vim'], 'insert': 1}
+imap <silent><expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+let s:hooks = neobundle#get_hooks('neocomplete.vim')
+function! s:hooks.on_source(bundle) abort "{{{
+    "neocomplete.vim
+    augroup MyNeoCompleteAutoCmd
+        autocmd!
+        autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+        autocmd FileType html       setlocal omnifunc=javascriptcomplete#CompleteJS
+    augroup END
+
+    smap <silent><expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+    nmap <silent><expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+    imap <silent><expr><CR> pumvisible()                         ? "\<Plug>(neosnippet_expand_or_jump)" : "\<CR>"
+    nmap <silent><S-TAB> <ESC>a<C-r>=neosnippet#commands#_clear_markers()<CR>
+    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
+
+    let g:neocomplete#auto_completion_start_length = 3
+    let g:neocomplete#data_directory               = $HOME .'/.vim/neocomplete.vim'
+    let g:neocomplete#enable_at_startup            = 1
+    let g:neocomplete#enable_auto_close_preview    = 1
+    let g:neocomplete#enable_auto_delimiter        = 1
+    let g:neocomplete#enable_auto_select           = 0
+    let g:neocomplete#enable_fuzzy_completion      = 0
+    let g:neocomplete#enable_smart_case            = 1
+    let g:neocomplete#fallback_mappings            = ["\<C-x>\<C-o>", "\<C-x>\<C-n>"]
+    let g:neocomplete#keyword_patterns             = {'_': '\h\w*'}
+    let g:neocomplete#lock_buffer_name_pattern     = '\.log\|.*quickrun.*\|.jax'
+    let g:neocomplete#max_keyword_width            = 30
+    let g:neocomplete#max_list                     = 8
+    let g:neocomplete#min_keyword_length           = 3
+    let g:neocomplete#sources                      = {
+    \    '_':          ['neosnippet', 'file', 'buffer'],
+    \    'html':       ['neosnippet', 'file', 'omni',    'buffer'],
+    \    'javascript': ['neosnippet', 'file', 'omni',    'buffer']}
+    let g:neocomplete#sources#buffer#cache_limit_size  = 50000
+    let g:neocomplete#sources#buffer#disabled_pattern  = '\.log\|\.jax'
+    let g:neocomplete#sources#buffer#max_keyword_width = 30
+    let g:neocomplete#use_vimproc                      = 1
+
+    "neoinclude.vim
+    let g:neoinclude#max_processes = 5
+
+    "neosnippet.vim
+    let g:neosnippet#data_directory                = $HOME .'/.vim/neosnippet.vim'
+    let g:neosnippet#enable_snipmate_compatibility = 1
+    let g:neosnippet#disable_runtime_snippets      = {'_' : 1}
+    let g:neosnippet#snippets_directory            = $HOME .'/.vim/bundle/neosnippet-snippets/neosnippets'
+endfunction
+
+NeoBundleFetch 'tokuhirom/jsref'
+NeoBundleFetch 'mustardamus/jqapi'
+NeoBundleLazy 'thinca/vim-ref', {'depends': 'mojako/ref-sources.vim', 'on_func': 'ref#K', 'on_map': '<Plug>(ref-keyword)'}
+let g:ref_no_default_key_mappings = 1
+inoremap <silent><C-k> <C-o>:call<Space>ref#K('normal')<CR><ESC>
+nmap <silent>K <Plug>(ref-keyword)
+let s:hooks = neobundle#get_hooks('vim-ref')
+function! s:hooks.on_source(bundle) abort "{{{
+    let g:ref_cache_dir       = s:envHome .'/.vim/vim-ref/cache'
+    let g:ref_detect_filetype = {
+    \    'html':       ['javascript', 'jquery'],
+    \    'javascript': ['javascript', 'jquery']}
+    let g:ref_javascript_doc_path = s:envHome .'/.vim/bundle/jsref/htdocs'
+    let g:ref_jquery_doc_path     = s:envHome .'/.vim/bundle/jqapi'
+    let g:ref_use_cache           = 1
+    let g:ref_use_vimproc         = 1
+endfunction
 
 call neobundle#end()
 filetype plugin indent on
@@ -373,7 +445,9 @@ colorscheme hybrid
 " singleton
 "----------------------------------------
 
-call singleton#enable()
+if has('win64')
+    call singleton#enable()
+endif
 
 "----------------------------------------
 " lightline.vim
@@ -735,8 +809,8 @@ let g:restart_sessionoptions = 'buffers,curdir,folds,help,localoptions,tabpages'
 
 nnoremap <m-t> <c-w>w
 nnoremap <m-r> <c-w>W
-nmap <c-h> <Plug>DWMRotateCounterclockwise
-nmap <c-l> <Plug>DWMRotateClockwise
+nmap <m-h> <Plug>DWMRotateCounterclockwise
+nmap <m-l> <Plug>DWMRotateClockwise
 nmap <c-n> <Plug>DWMNew
 nmap <c-c> <Plug>DWMClose
 nmap <c-@> <Plug>DWMFocus
@@ -928,7 +1002,7 @@ nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
 " ag + ctrlsf
 "----------------------------------------
 
-"let g:ctrlsf_context = '-C 2'
+let g:ctrlsf_context = '-C 2'
 
 "----------------------------------------
 " for jq
@@ -991,4 +1065,30 @@ set statusline=%{anzu#search_status()}
 "----------------------------------------
 
 cd ~
+
+"----------------------------------------
+" Syntastic
+"----------------------------------------
+
+let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute \"ng-"]
+let g:syntastic_check_on_open=0 "ファイルを開いたときはチェックしない
+let g:syntastic_check_on_save=1 "保存時にはチェック
+let g:syntastic_check_on_wq = 0 " wqではチェックしない
+let g:syntastic_auto_loc_list=0 "エラーがあったら自動でロケーションリストを開く
+let g:syntastic_loc_list_height=6 "エラー表示ウィンドウの高さ
+set statusline+=%#warningmsg# "エラーメッセージの書式
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_javascript_checkers = ['eslint'] "ESLintを使う
+let g:syntastic_mode_map = {
+      \ 'mode': 'active',
+      \ 'active_filetypes': ['javascript'],
+      \ 'passive_filetypes': []
+      \ }
+
+"----------------------------------------
+" Emmet-vim
+"----------------------------------------
+
+let g:user_emmet_leader_key='<c-e>'
 

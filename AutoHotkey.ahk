@@ -10,6 +10,15 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;; Target Application
 ;; -------------------------------------------------- 
 
+is_Intellij()
+{
+  IfWinActive,ahk_exe idea.exe
+    Return 1
+  IfWinActive,ahk_exe idea64.exe
+    Return 1
+  Return 0
+}
+
 is_MCalc()
 {
   IfWinActive,ahk_exe MCalc.exe
