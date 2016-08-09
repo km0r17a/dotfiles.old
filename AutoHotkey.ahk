@@ -5,6 +5,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 #UseHook
 #Include %A_ScriptDir%\emacs.ahk
+#Include %A_ScriptDir%\IME.ahk
 
 ;; -------------------------------------------------- 
 ;; Target Application
@@ -137,6 +138,7 @@ is_tabs()
 
 is_chrome()
 {
+  IfWinActive,ahk_exe chrome.exe
   IfWinActive,ahk_class Chrome_WidgetWin_0
     Return 1
   IfWinActive,ahk_class Chrome_WidgetWin_1
@@ -281,10 +283,21 @@ is_NPEnable()
 ;; Global Settings
 ;; -------------------------------------------------- 
 
+ResetIme()
+{
+  IME_SET(0)
+  Send {ESC}
+}
+
 ;;
 ;; ESC
 ;;
-^[::Send {ESC}
+^[::
+  If (is_Intellij() || is_rlogin())
+    ResetIme()
+  Else
+    Send {ESC}
+  Return
 
 ;;
 ;; Switching Backspace / Backslash
@@ -324,10 +337,30 @@ WinMoveStep(XD,YD) {
   WinMove,ahk_id %win_id%,,%x%,%y%
   return
 }
-^+y::WinMoveStep(-4,0)
-^+o::WinMoveStep(4,0)
-^+i::WinMoveStep(0,-2)
-^+u::WinMoveStep(0,2)
+^+y::
+  If !is_Intellij()
+    WinMoveStep(-4,0)
+  Else
+    Send %A_ThisHotkey%
+  Return
+^+o::
+  If !is_Intellij()
+    WinMoveStep(4,0)
+  Else
+    Send %A_ThisHotkey%
+  Return
+^+i::
+  If !is_Intellij()
+    WinMoveStep(0,-2)
+  Else
+    Send %A_ThisHotkey%
+  Return
+^+u::
+  If !is_Intellij()
+    WinMoveStep(0,2)
+  Else
+    Send %A_ThisHotkey%
+  Return
 
 ;;
 ;; Window Minimize
@@ -385,7 +418,7 @@ Return
 +!]::
   If (is_tabs() || is_browser())
     Send ^{TAB}
-  Else If (is_vim() || is_putty() || is_rlogin())
+  Else If (is_vim() || is_putty() || is_rlogin() || is_Intellij())
     Send {ESC}gt
   Else If is_excel()
     Send ^{PgDn}
@@ -396,7 +429,7 @@ Return
 +![::
   If (is_tabs() || is_browser())
     Send +^{TAB}
-  Else If (is_vim() || is_putty() || is_rlogin())
+  Else If (is_vim() || is_putty() || is_rlogin() || is_Intellij())
     Send {ESC}gT
   Else If is_excel()
     Send ^{PgUp}
@@ -459,6 +492,10 @@ Return
 <!2::Send ^2
 <!3::Send ^3
 <!4::Send ^4
+#IF
+
+#IF is_Intellij()
+!F4::Return
 #IF
 
 ;; -------------------------------------------------- 

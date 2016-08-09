@@ -52,6 +52,8 @@ set smartcase
 set wrapscan
 set incsearch
 set hlsearch
+set iminsert=0
+set imsearch=0
 
 "----------------------------------------
 " 表示設定
@@ -74,9 +76,9 @@ set laststatus=2
 set showcmd
 set display=lastline
 
-if &t_Co > 2 || has('gui_running')
-  syntax on
-endif
+"if &t_Co > 2 || has('gui_running')
+"  syntax on
+"endif
 
 "-----------------------------
 " ステータスラインに文字コード等表示
@@ -160,7 +162,7 @@ if has('folding')
 endif
 
 " 「日本語入力固定モード」の動作モード
-"let IM_CtrlMode = 4
+let IM_CtrlMode = 4
 " 「日本語入力固定モード」切替キー
 "inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
@@ -287,13 +289,48 @@ nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
 set previewheight=25
 
 "----------------------------------------
+" dein
+"----------------------------------------
+
+"let s:dein_dir = expand('~/.vim/dein')
+"let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+"
+"if &runtimepath !~# '/dein.vim'
+"  if !isdirectory(s:dein_repo_dir)
+"    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+"  endif
+"  execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
+"endif
+"
+"if dein#load_state(s:dein_dir)
+"  call dein#begin(s:dein_dir)
+"
+"  " プラグインリストを収めた TOML ファイル
+"  " 予め TOML ファイル（後述）を用意しておく
+"  let g:rc_dir    = expand('~/.vim/rc')
+"  let s:toml      = g:rc_dir . '/dein.toml'
+"  let s:lazy_toml = g:rc_dir . '/dein_lazy.toml'
+"
+"  " TOML を読み込み、キャッシュしておく
+"  call dein#load_toml(s:toml,      {'lazy': 0})
+"  call dein#load_toml(s:lazy_toml, {'lazy': 1})
+"
+"  " 設定終了
+"  call dein#end()
+"  call dein#save_state()
+"endif
+"
+"if dein#check_install()
+"  call dein#install()
+"endif
+
+"----------------------------------------
 " neobundle
 "----------------------------------------
 if &compatible
   set nocompatible               " Be iMproved
 endif
 
-"set runtimepath^=~/.vim/bundle/neobundle.vim/
 set runtimepath+=~/.vim/bundle/neobundle.vim/
 call neobundle#begin(expand('~/.vim/bundle/'))
 
@@ -305,6 +342,8 @@ NeoBundle  'Shougo/unite.vim'
 NeoBundle  'Shougo/neomru.vim'
 NeoBundle  'Shougo/neosnippet'
 NeoBundle  'Shougo/neosnippet-snippets'
+NeoBundle  'mattn/benchvimrc-vim'
+
 NeoBundle  'Shougo/vimproc.vim', {
 \ 'build' : {
 \     'windows' : 'gmake -f make_mingw64.mak',
@@ -314,6 +353,7 @@ NeoBundle  'Shougo/vimproc.vim', {
 \     'unix' : 'gmake',
 \    },
 \ }
+
 "\     'windows' : 'tools\\update-dll-mingw',
 NeoBundle  'Shougo/vimshell'
 
@@ -362,62 +402,18 @@ NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'othree/html5.vim'
 NeoBundle 'mattn/emmet-vim'
 
+NeoBundle 'dhruvasagar/vim-table-mode'           " for markdown(table)
+
+NeoBundleLazy  'Konfekt/FastFold'
+
 NeoBundleLazy 'pangloss/vim-javascript', {'filetypes': ['html', 'php', 'javascript']}
 NeoBundleLazy 'vim-scripts/taglist.vim', {'commands': 'Tlist'}
-NeoBundleLazy 'Shougo/neocomplete.vim', {'depends': ['KazuakiM/neosnippet-snippets', 'Shougo/neosnippet.vim', 'Shougo/neoinclude.vim'], 'insert': 1}
-imap <silent><expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-let s:hooks = neobundle#get_hooks('neocomplete.vim')
-function! s:hooks.on_source(bundle) abort "{{{
-    "neocomplete.vim
-    augroup MyNeoCompleteAutoCmd
-        autocmd!
-        autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-        autocmd FileType html       setlocal omnifunc=javascriptcomplete#CompleteJS
-    augroup END
-
-    smap <silent><expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-    nmap <silent><expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-    imap <silent><expr><CR> pumvisible()                         ? "\<Plug>(neosnippet_expand_or_jump)" : "\<CR>"
-    nmap <silent><S-TAB> <ESC>a<C-r>=neosnippet#commands#_clear_markers()<CR>
-    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-
-    let g:neocomplete#auto_completion_start_length = 3
-    let g:neocomplete#data_directory               = $HOME .'/.vim/neocomplete.vim'
-    let g:neocomplete#enable_at_startup            = 1
-    let g:neocomplete#enable_auto_close_preview    = 1
-    let g:neocomplete#enable_auto_delimiter        = 1
-    let g:neocomplete#enable_auto_select           = 0
-    let g:neocomplete#enable_fuzzy_completion      = 0
-    let g:neocomplete#enable_smart_case            = 1
-    let g:neocomplete#fallback_mappings            = ["\<C-x>\<C-o>", "\<C-x>\<C-n>"]
-    let g:neocomplete#keyword_patterns             = {'_': '\h\w*'}
-    let g:neocomplete#lock_buffer_name_pattern     = '\.log\|.*quickrun.*\|.jax'
-    let g:neocomplete#max_keyword_width            = 30
-    let g:neocomplete#max_list                     = 8
-    let g:neocomplete#min_keyword_length           = 3
-    let g:neocomplete#sources                      = {
-    \    '_':          ['neosnippet', 'file', 'buffer'],
-    \    'html':       ['neosnippet', 'file', 'omni',    'buffer'],
-    \    'javascript': ['neosnippet', 'file', 'omni',    'buffer']}
-    let g:neocomplete#sources#buffer#cache_limit_size  = 50000
-    let g:neocomplete#sources#buffer#disabled_pattern  = '\.log\|\.jax'
-    let g:neocomplete#sources#buffer#max_keyword_width = 30
-    let g:neocomplete#use_vimproc                      = 1
-
-    "neoinclude.vim
-    let g:neoinclude#max_processes = 5
-
-    "neosnippet.vim
-    let g:neosnippet#data_directory                = $HOME .'/.vim/neosnippet.vim'
-    let g:neosnippet#enable_snipmate_compatibility = 1
-    let g:neosnippet#disable_runtime_snippets      = {'_' : 1}
-    let g:neosnippet#snippets_directory            = $HOME .'/.vim/bundle/neosnippet-snippets/neosnippets'
-endfunction
+NeoBundleLazy 'Shougo/neocomplete.vim'
 
 NeoBundleFetch 'tokuhirom/jsref'
 NeoBundleFetch 'mustardamus/jqapi'
 NeoBundleLazy 'thinca/vim-ref', {'depends': 'mojako/ref-sources.vim', 'on_func': 'ref#K', 'on_map': '<Plug>(ref-keyword)'}
+
 let g:ref_no_default_key_mappings = 1
 inoremap <silent><C-k> <C-o>:call<Space>ref#K('normal')<CR><ESC>
 nmap <silent>K <Plug>(ref-keyword)
@@ -432,6 +428,7 @@ function! s:hooks.on_source(bundle) abort "{{{
     let g:ref_use_cache           = 1
     let g:ref_use_vimproc         = 1
 endfunction
+let g:table_mode_corner="|"
 
 call neobundle#end()
 filetype plugin indent on
@@ -534,7 +531,7 @@ nnoremap <Space>/ *
 nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
 
 " Visual Mark
-noremap <unique> ,s <Plug>Vm_goto_next_sign
+"noremap <unique> ,s <Plug>Vm_goto_next_sign
 
 " 最後に貼り付けた箇所を選択
 nnoremap gc `[v`]
@@ -817,6 +814,8 @@ nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
 nmap <c-q> <Plug>DWMGrowMaster
 nmap <c-z> <Plug>DWMShrinkMaster
+
+"nnoremap <buffer> <c-k> <c-k>
  
 " Unite 設定
 noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
@@ -1003,6 +1002,10 @@ nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
 "----------------------------------------
 
 let g:ctrlsf_context = '-C 2'
+let g:ctrlsf_mapping = {
+    \ "next": "n",
+    \ "prev": "N",
+    \ }
 
 "----------------------------------------
 " for jq

@@ -98,6 +98,7 @@ set diffopt-=filler
 "----------------------------------------
 
 "set imdisable
+
 " 以下、初期動作のためにコメントアウトした。
 
 highlight ZenkakuSpace guibg=#000060

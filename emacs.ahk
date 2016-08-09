@@ -350,6 +350,13 @@ scroll_down()
     Send %A_ThisHotkey%
   Return
 
+<+<!r::
+  If is_te()
+    Send {F2}
+  Else
+    Send %A_ThisHotkey%
+  Return
+
 ^w::
   If (is_xf() || is_te())
     Send %A_ThisHotkey%
@@ -465,6 +472,10 @@ LCtrl & vk20sc039::
 ;  global is_pre_spc = 0
 ;  Return
 
+#IF is_excel()
++vk2Esc153::Send ^v
+#IF 
+
 !v::
   If (is_vim() || is_putty() || is_vbox())
     ;; Paste
@@ -509,27 +520,12 @@ LCtrl & vk20sc039::
     Send %A_ThisHotkey%
   Return
 
-<!d::
-  If (is_explorer() || is_xf() || is_te())
-    Return
-  Else
-    Send %A_ThisHotkey%
-  Return
+#IF (is_explorer() || is_te())
+<!l::Send !d
+<!d::Return
+#IF
 
-; (is_explorer() || is_xf() || is_te())
-#IF WinActive("ahk_exe explorer.exe")
-<!l::Send !d
-#IF
-#IF WinActive("ahk_class TablacusExplorer")
-<!l::Send !d
-#IF
-#IF WinActive("ahk_class IEFrame")
-<!l::Send ^l
-#IF
-#IF WinActive("ahk_class Chrome_WidgetWin_0")
-<!l::Send ^l
-#IF
-#IF WinActive("ahk_class Chrome_WidgetWin_1")
+#IF (is_ie() || is_chrome())
 <!l::Send ^l
 #IF
 
