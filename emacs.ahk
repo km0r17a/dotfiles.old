@@ -16,7 +16,9 @@ is_pre_spc = 0
 ; (Please comment out applications you don't use)
 is_target()
 {
-  If is_Intellij()
+  If is_acrobat()
+    Return 1 
+  If is_intellij()
     Return 1 
   If is_eclipse()
     Return 1 
@@ -305,7 +307,7 @@ scroll_down()
   Return
 
 ^h::
-  If (is_excel() || is_console() || is_eclipse() || is_Intellij())
+  If (is_excel() || is_console() || is_eclipse() || is_intellij() || is_acrobat())
     delete_backward_char()
   Else If is_target()
     Send %A_ThisHotkey%
@@ -346,13 +348,6 @@ scroll_down()
 <^<!r::
   If is_office()
     Send ^{F1}
-  Else
-    Send %A_ThisHotkey%
-  Return
-
-<+<!r::
-  If is_te()
-    Send {F2}
   Else
     Send %A_ThisHotkey%
   Return
@@ -429,28 +424,38 @@ LCtrl & vk20sc039::
     move_end_of_line()
   Return
 
-^q::
-  If allowed_quit()
-    kill_emacs()
-  Else
-    Send %A_ThisHotkey%
-  Return
+;;;^q::
+;;;  If allowed_quit()
+;;;    kill_emacs()
+;;;  Else
+;;;    Send %A_ThisHotkey%
+;;;  Return
 
 ^p::
-  If (is_NPEnable() || is_browser())
+  If (is_NPEnable() || is_browser() || is_opera())
     previous_line()
   Else
     Send %A_ThisHotkey%
   Return
 
+!p::
+  If is_vivaldi() 
+    Return
+  Else
+    Send %A_ThisHotkey%
+  Return
+
 ^n::
-  If (is_NPEnable() || is_browser())
+  If (is_NPEnable() || is_browser() || is_opera())
     next_line()
   Else
     Send %A_ThisHotkey%
   Return
 
 ^b::
+  If (is_opera() || is_vivaldi())
+;    Send +{Space}
+    Send %A_ThisHotkey%
   If (is_target() || is_chrome())
     Send %A_ThisHotkey%
   Else
@@ -472,19 +477,10 @@ LCtrl & vk20sc039::
 ;  global is_pre_spc = 0
 ;  Return
 
-#IF is_excel()
-+vk2Esc153::Send ^v
-#IF 
-
-!v::
-  If (is_vim() || is_putty() || is_vbox())
-    ;; Paste
-    Send +{Insert}
-  Else If is_console()
-    Send !{Space}ep
-  Else
-    Send %A_ThisHotkey%
-  Return
+;; Shift + Delete = Cut
+;#IF is_excel()
+;+vk2Esc153::Send ^x
+;#IF 
 
 ;^z::
 ;  Send %A_ThisHotkey%
@@ -511,8 +507,6 @@ LCtrl & vk20sc039::
     move_end_of_bottomline()
   Return
 
-<^<+m::Send {Appskey}
-
 <^<!p::
   If is_visio()
     Send +{F4}
@@ -520,12 +514,38 @@ LCtrl & vk20sc039::
     Send %A_ThisHotkey%
   Return
 
-#IF (is_explorer() || is_te())
-<!l::Send !d
-<!d::Return
-#IF
+<+<!e::
+  If is_proj()
+    Send +{F2}
+  Else
+    Send %A_ThisHotkey%
+  Return
 
-#IF (is_ie() || is_chrome())
-<!l::Send ^l
-#IF
+<^<![::
+  If is_proj()
+    Send !{PgUp}
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<^<!]::
+  If is_proj()
+    Send !{PgDn}
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+;;<+<!vkBCsc033::
+;;  If is_proj()
+;;    Send +!{Left}
+;;  Else
+;;    Send %A_ThisHotkey%
+;;  Return
+;;
+;;<+<!.::
+;;  If is_proj()
+;;    Send +!{Right}
+;;  Else
+;;    Send %A_ThisHotkey%
+;;  Return
 

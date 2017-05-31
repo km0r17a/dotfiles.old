@@ -139,8 +139,11 @@ function! MyTabMove(c)
 endfunction
 
 "----------------------------------------
-" 透過でござる
+" 透過
 "----------------------------------------
 
-autocmd GUIEnter * set transparency=238
+autocmd GUIEnter * set transparency=232
+
+" 起動時最大化
+"au GUIEnter * simalt ~x
 

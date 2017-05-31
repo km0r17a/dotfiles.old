@@ -2,6 +2,8 @@ set nocompatible
 set encoding=utf-8
 set fileencodings=ucs-bom,iso-2022-jp,utf-8,cp932,euc-jp,default,latin
 set sessionoptions-=blank
+set fileformat=unix
+set fileformats=unix,dos,mac
 
 " $HOME が設定されていること。
 
@@ -79,6 +81,9 @@ set display=lastline
 "if &t_Co > 2 || has('gui_running')
 "  syntax on
 "endif
+
+filetype off
+filetype plugin indent off
 
 "-----------------------------
 " ステータスラインに文字コード等表示
@@ -368,7 +373,7 @@ NeoBundle  'deris/vim-diffbuf'
 NeoBundle  'spolu/dwm.vim'
 
 " Color Scheme
-NeoBundle  'ujihisa/unite-colorscheme'
+"NeoBundle  'ujihisa/unite-colorscheme'
 NeoBundle  'itchyny/lightline.vim'
 NeoBundle  'w0ng/vim-hybrid'
 NeoBundle  'cocopon/lightline-hybrid.vim'
@@ -378,10 +383,10 @@ NeoBundle 'scrooloose/syntastic'
 
 " ドキュメント参照
 "NeoBundle 'thinca/vim-ref'
-NeoBundle 'yuku-t/vim-ref-ri'
+"NeoBundle 'yuku-t/vim-ref-ri'
 
-" メソッド定義元へのジャンプ
-NeoBundle 'szw/vim-tags'
+"" メソッド定義元へのジャンプ
+"NeoBundle 'szw/vim-tags'
 
 " 自動で閉じる
 NeoBundle 'tpope/vim-endwise'
@@ -404,37 +409,38 @@ NeoBundle 'mattn/emmet-vim'
 
 NeoBundle 'dhruvasagar/vim-table-mode'           " for markdown(table)
 
-NeoBundleLazy  'Konfekt/FastFold'
+"NeoBundleLazy  'Konfekt/FastFold'
 
 NeoBundleLazy 'pangloss/vim-javascript', {'filetypes': ['html', 'php', 'javascript']}
-NeoBundleLazy 'vim-scripts/taglist.vim', {'commands': 'Tlist'}
+"NeoBundleLazy 'vim-scripts/taglist.vim', {'commands': 'Tlist'}
 NeoBundleLazy 'Shougo/neocomplete.vim'
 
-NeoBundleFetch 'tokuhirom/jsref'
-NeoBundleFetch 'mustardamus/jqapi'
-NeoBundleLazy 'thinca/vim-ref', {'depends': 'mojako/ref-sources.vim', 'on_func': 'ref#K', 'on_map': '<Plug>(ref-keyword)'}
-
-let g:ref_no_default_key_mappings = 1
-inoremap <silent><C-k> <C-o>:call<Space>ref#K('normal')<CR><ESC>
-nmap <silent>K <Plug>(ref-keyword)
-let s:hooks = neobundle#get_hooks('vim-ref')
-function! s:hooks.on_source(bundle) abort "{{{
-    let g:ref_cache_dir       = s:envHome .'/.vim/vim-ref/cache'
-    let g:ref_detect_filetype = {
-    \    'html':       ['javascript', 'jquery'],
-    \    'javascript': ['javascript', 'jquery']}
-    let g:ref_javascript_doc_path = s:envHome .'/.vim/bundle/jsref/htdocs'
-    let g:ref_jquery_doc_path     = s:envHome .'/.vim/bundle/jqapi'
-    let g:ref_use_cache           = 1
-    let g:ref_use_vimproc         = 1
-endfunction
-let g:table_mode_corner="|"
+"NeoBundleFetch 'tokuhirom/jsref'
+"NeoBundleFetch 'mustardamus/jqapi'
+"NeoBundleLazy 'thinca/vim-ref', {'depends': 'mojako/ref-sources.vim', 'on_func': 'ref#K', 'on_map': '<Plug>(ref-keyword)'}
+"
+"let g:ref_no_default_key_mappings = 1
+"inoremap <silent><C-k> <C-o>:call<Space>ref#K('normal')<CR><ESC>
+"nmap <silent>K <Plug>(ref-keyword)
+"let s:hooks = neobundle#get_hooks('vim-ref')
+"function! s:hooks.on_source(bundle) abort "{{{
+"    let g:ref_cache_dir       = s:envHome .'/.vim/vim-ref/cache'
+"    let g:ref_detect_filetype = {
+"    \    'html':       ['javascript', 'jquery'],
+"    \    'javascript': ['javascript', 'jquery']}
+"    let g:ref_javascript_doc_path = s:envHome .'/.vim/bundle/jsref/htdocs'
+"    let g:ref_jquery_doc_path     = s:envHome .'/.vim/bundle/jqapi'
+"    let g:ref_use_cache           = 1
+"    let g:ref_use_vimproc         = 1
+"endfunction
+"let g:table_mode_corner="|"
 
 call neobundle#end()
 filetype plugin indent on
 NeoBundleCheck
 
 syntax on
+set synmaxcol=300
 set background=dark
 colorscheme hybrid
 
@@ -518,6 +524,10 @@ endfunction
 " keymap
 "----------------------------------------
 
+nnoremap ; :
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
 nnoremap g. `.
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
@@ -660,7 +670,7 @@ let QFixHowm_KeyB = ','
 let howm_dir = '~/Documents/howm'
 let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
 let howm_fileencoding = &enc
-let howm_fileformat = 'dos'
+let howm_fileformat = 'unix'
 
 let QFixWin_EnableMode = 2
 let QFix_UseLocationList = 1
@@ -809,7 +819,7 @@ nnoremap <m-r> <c-w>W
 nmap <m-h> <Plug>DWMRotateCounterclockwise
 nmap <m-l> <Plug>DWMRotateClockwise
 nmap <c-n> <Plug>DWMNew
-nmap <c-c> <Plug>DWMClose
+"nmap <c-c> <Plug>DWMClose
 nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
 nmap <c-q> <Plug>DWMGrowMaster
@@ -892,47 +902,47 @@ endfunction
 
 set guitablabel=%{GuiTabLabel()}
 
-"----------------------------------------
-" SyntaxInfo
-"----------------------------------------
-
-function! s:get_syn_id(transparent)
-  let synid = synID(line("."), col("."), 1)
-  if a:transparent
-    return synIDtrans(synid)
-  else
-    return synid
-  endif
-endfunction
-function! s:get_syn_attr(synid)
-  let name = synIDattr(a:synid, "name")
-  let ctermfg = synIDattr(a:synid, "fg", "cterm")
-  let ctermbg = synIDattr(a:synid, "bg", "cterm")
-  let guifg = synIDattr(a:synid, "fg", "gui")
-  let guibg = synIDattr(a:synid, "bg", "gui")
-  return {
-        \ "name": name,
-        \ "ctermfg": ctermfg,
-        \ "ctermbg": ctermbg,
-        \ "guifg": guifg,
-        \ "guibg": guibg}
-endfunction
-function! s:get_syn_info()
-  let baseSyn = s:get_syn_attr(s:get_syn_id(0))
-  echo "name: " . baseSyn.name .
-        \ " ctermfg: " . baseSyn.ctermfg .
-        \ " ctermbg: " . baseSyn.ctermbg .
-        \ " guifg: " . baseSyn.guifg .
-        \ " guibg: " . baseSyn.guibg
-  let linkedSyn = s:get_syn_attr(s:get_syn_id(1))
-  echo "link to"
-  echo "name: " . linkedSyn.name .
-        \ " ctermfg: " . linkedSyn.ctermfg .
-        \ " ctermbg: " . linkedSyn.ctermbg .
-        \ " guifg: " . linkedSyn.guifg .
-        \ " guibg: " . linkedSyn.guibg
-endfunction
-command! SyntaxInfo call s:get_syn_info()
+" "----------------------------------------
+" " SyntaxInfo
+" "----------------------------------------
+" 
+" function! s:get_syn_id(transparent)
+"   let synid = synID(line("."), col("."), 1)
+"   if a:transparent
+"     return synIDtrans(synid)
+"   else
+"     return synid
+"   endif
+" endfunction
+" function! s:get_syn_attr(synid)
+"   let name = synIDattr(a:synid, "name")
+"   let ctermfg = synIDattr(a:synid, "fg", "cterm")
+"   let ctermbg = synIDattr(a:synid, "bg", "cterm")
+"   let guifg = synIDattr(a:synid, "fg", "gui")
+"   let guibg = synIDattr(a:synid, "bg", "gui")
+"   return {
+"         \ "name": name,
+"         \ "ctermfg": ctermfg,
+"         \ "ctermbg": ctermbg,
+"         \ "guifg": guifg,
+"         \ "guibg": guibg}
+" endfunction
+" function! s:get_syn_info()
+"   let baseSyn = s:get_syn_attr(s:get_syn_id(0))
+"   echo "name: " . baseSyn.name .
+"         \ " ctermfg: " . baseSyn.ctermfg .
+"         \ " ctermbg: " . baseSyn.ctermbg .
+"         \ " guifg: " . baseSyn.guifg .
+"         \ " guibg: " . baseSyn.guibg
+"   let linkedSyn = s:get_syn_attr(s:get_syn_id(1))
+"   echo "link to"
+"   echo "name: " . linkedSyn.name .
+"         \ " ctermfg: " . linkedSyn.ctermfg .
+"         \ " ctermbg: " . linkedSyn.ctermbg .
+"         \ " guifg: " . linkedSyn.guifg .
+"         \ " guibg: " . linkedSyn.guibg
+" endfunction
+" command! SyntaxInfo call s:get_syn_info()
 
 "----------------------------------------
 " Modify Color Scheme
@@ -1067,7 +1077,7 @@ set statusline=%{anzu#search_status()}
 " for VimFiler
 "----------------------------------------
 
-cd ~
+"cd ~
 
 "----------------------------------------
 " Syntastic

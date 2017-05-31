@@ -3,15 +3,25 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+#InstallKeybdHook
 #UseHook
-#Include %A_ScriptDir%\emacs.ahk
+SetKeyDelay 0
+
 #Include %A_ScriptDir%\IME.ahk
+;#Include %A_ScriptDir%\emacs.ahk
 
 ;; -------------------------------------------------- 
 ;; Target Application
 ;; -------------------------------------------------- 
 
-is_Intellij()
+is_proj()
+{
+  IfWinActive,ahk_exe WINPROJ.EXE
+    Return 1
+  Return 0
+}
+
+is_intellij()
 {
   IfWinActive,ahk_exe idea.exe
     Return 1
@@ -78,18 +88,22 @@ is_altTabTuner()
 
 is_bandZip()
 {
-  IfWinActive,ahk_class BandiZipClass
+  IfWinActive,ahk_class BandizipClass
     Return 1
   Return 0
 }
 
 allowed_quit()
 {
+  If is_opera()
+    Return 1
   If is_te()
     Return 1
   If is_xf()
     Return 1
   If is_browser()
+    Return 1
+  If is_proj()
     Return 1
   If is_office()
     Return 1
@@ -116,6 +130,8 @@ is_srcTree()
 
 is_browser()
 {
+  If is_vivaldi()
+    Return 1
   If is_chrome()
     Return 1
   If is_ie()
@@ -127,6 +143,8 @@ is_browser()
 
 is_tabs()
 {
+  If is_acrobat()
+    Return 1
   If is_te()
     Return 1
   If is_xf()
@@ -136,12 +154,30 @@ is_tabs()
   Return 0
 }
 
+is_acrobat()
+{
+  IfWinActive,ahk_exe AcroRd32.exe
+    Return 1
+  Return 0
+}
+
+is_vivaldi()
+{
+  IfWinActive,ahk_exe vivaldi.exe
+    Return 1
+  Return 0
+}
+
+is_opera()
+{
+  IfWinActive,ahk_exe opera.exe
+    Return 1
+  Return 0
+}
+
 is_chrome()
 {
   IfWinActive,ahk_exe chrome.exe
-  IfWinActive,ahk_class Chrome_WidgetWin_0
-    Return 1
-  IfWinActive,ahk_class Chrome_WidgetWin_1
     Return 1
   Return 0
 }
@@ -251,6 +287,10 @@ is_key_hook()
 
 alt_arrow()
 {
+  If is_vivaldi()
+    Return 1
+  If is_opera()
+    Return 1
   If is_te()
     Return 1
   If is_xf()
@@ -270,6 +310,8 @@ is_NPEnable()
     Return 1
   If is_xf()
     Return 1
+  If is_proj()
+    Return 1
   If is_word()
     Return 1
   IfWinActive,ahk_class TTeraPadMainForm
@@ -283,6 +325,22 @@ is_NPEnable()
 ;; Global Settings
 ;; -------------------------------------------------- 
 
+ResetImeAndOpenTab()
+{
+  Send ^t
+  Sleep 200
+  IME_SET(0)
+  Return
+}
+
+ResetImeAndSearch()
+{
+  Send !l
+  Sleep 200
+  IME_SET(0)
+  Return
+}
+
 ResetIme()
 {
   IME_SET(0)
@@ -293,20 +351,20 @@ ResetIme()
 ;; ESC
 ;;
 ^[::
-  If (is_Intellij() || is_rlogin())
+  If (is_intellij() || is_rlogin() || is_vivaldi())
     ResetIme()
   Else
     Send {ESC}
   Return
 
-;;
-;; Switching Backspace / Backslash
-;;
-\::Send {Blind}{Backspace}
-Backspace::Send {Blind}\
-+\::Send {Blind}+{Backspace}
-+Backspace::Send {Blind}|
-^\::Send {Blind}{DEL}
+; ;;
+; ;; Switching Backspace / Backslash
+; ;;
+; \::Send {Blind}{Backspace}
+; Backspace::Send {Blind}\
+; +\::Send {Blind}+{Backspace}
+; +Backspace::Send {Blind}|
+; ^\::Send {Blind}{DEL}
 
 ;;
 ;; Switching Right Win / Compose (for Sun type 7)
@@ -325,42 +383,42 @@ Appskey::RCtrl
 <!j::AltTab
 <!k::ShiftAltTab
 
-;;
-;; Window Move
-;;
-WinMoveStep(XD,YD) {
-  WinGet,win_id,ID,A
-  WinGetPos,x,y,,,ahk_id %win_id%
-  Step :=15
-  x := x + (XD * Step)
-  y := y + (YD * Step)
-  WinMove,ahk_id %win_id%,,%x%,%y%
-  return
-}
-^+y::
-  If !is_Intellij()
-    WinMoveStep(-4,0)
-  Else
-    Send %A_ThisHotkey%
-  Return
-^+o::
-  If !is_Intellij()
-    WinMoveStep(4,0)
-  Else
-    Send %A_ThisHotkey%
-  Return
-^+i::
-  If !is_Intellij()
-    WinMoveStep(0,-2)
-  Else
-    Send %A_ThisHotkey%
-  Return
-^+u::
-  If !is_Intellij()
-    WinMoveStep(0,2)
-  Else
-    Send %A_ThisHotkey%
-  Return
+;;;
+;;; Window Move
+;;;
+;WinMoveStep(XD,YD) {
+;  WinGet,win_id,ID,A
+;  WinGetPos,x,y,,,ahk_id %win_id%
+;  Step :=15
+;  x := x + (XD * Step)
+;  y := y + (YD * Step)
+;  WinMove,ahk_id %win_id%,,%x%,%y%
+;  return
+;}
+;^+y::
+;  If !is_intellij()
+;    WinMoveStep(-4,0)
+;  Else
+;    Send %A_ThisHotkey%
+;  Return
+;^+o::
+;  If !is_intellij()
+;    WinMoveStep(4,0)
+;  Else
+;    Send %A_ThisHotkey%
+;  Return
+;^+i::
+;  If !is_intellij()
+;    WinMoveStep(0,-2)
+;  Else
+;    Send %A_ThisHotkey%
+;  Return
+;^+u::
+;  If !is_intellij()
+;    WinMoveStep(0,2)
+;  Else
+;    Send %A_ThisHotkey%
+;  Return
 
 ;;
 ;; Window Minimize
@@ -408,6 +466,13 @@ Return
 ;;
 <#<!i::Send {F12}
 
+;; Shortcuts 
+;<!i::Send |
+;<!q::Send \
+;<!e::Send `=
+;<!p::Send {+}
+;<!g::Send ``
+
 ;; Zoom In/Out
 <+<!vkBBsc027::Send ^{WheelUp}
 <+<!vkE2sc073::Send ^{WheelDown}
@@ -416,23 +481,31 @@ Return
 ;; emulate Ctrl + TAB function
 ;;
 +!]::
+  If is_opera()
+    Send ^{PgDn}
   If (is_tabs() || is_browser())
     Send ^{TAB}
-  Else If (is_vim() || is_putty() || is_rlogin() || is_Intellij())
+  Else If (is_vim() || is_putty() || is_rlogin() || is_intellij())
     Send {ESC}gt
   Else If is_excel()
     Send ^{PgDn}
+  Else If is_proj()
+    Send !{Right}
   Else
     Send %A_ThisHotkey%
   Return
 
 +![::
+  If is_opera()
+    Send ^{PgUp}
   If (is_tabs() || is_browser())
     Send +^{TAB}
-  Else If (is_vim() || is_putty() || is_rlogin() || is_Intellij())
+  Else If (is_vim() || is_putty() || is_rlogin() || is_intellij())
     Send {ESC}gT
   Else If is_excel()
     Send ^{PgUp}
+  Else If is_proj()
+    Send !{Left}
   Else
     Send %A_ThisHotkey%
   Return
@@ -494,9 +567,111 @@ Return
 <!4::Send ^4
 #IF
 
-#IF is_Intellij()
+#IF is_intellij()
 !F4::Return
 #IF
+
+;------------------------
+
+<^<+m::Send {Appskey}
+
+;------------------------
+
+!v::
+  If (is_vim() || is_putty() || is_vbox())
+    ;; Paste
+    Send +{Insert}
+  Else If is_console()
+    Send !{Space}ep
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+#IF (is_explorer() || is_te())
+<!l::Send !d
+<!d::Return
+#IF
+
+#IF is_vivaldi()
+<!l::ResetImeAndSearch()
+<^t::ResetImeAndOpenTab()
+#IF
+
+#IF (is_ie() || is_chrome())
+<!l::Send ^l
+#IF
+
+;------------------------
+
+^q::
+  If allowed_quit()
+    Send !{F4}
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!r::
+  If (is_te() || is_proj())
+    Send {F2}
+  Else If is_excel()
+    Send !har
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!l::
+  If is_proj()
+    Send ^{F2}
+  Else If is_excel()
+    Send !hal
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!c::
+  If is_excel()
+    Send !hac
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+
+;; -------------------------------------------------- 
+;; Excel - Disable F1 key
+;; -------------------------------------------------- 
+
+#IfWinActive ahk_exe EXCEL.EXE
+F1::
+return
+#IfWinActive
+
+<+<!w::
+  If is_excel()
+    Send !hw
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!t::
+  If is_excel()
+    Send !hat
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!b::
+  If is_excel()
+    Send !hab
+  Else
+    Send %A_ThisHotkey%
+  Return
+
+<+<!m::
+  If is_excel()
+    Send !ham
+  Else
+    Send %A_ThisHotkey%
+  Return
 
 ;; -------------------------------------------------- 
 ;; TabTuner.ahk -- Giraffe/Data に直接配置する
