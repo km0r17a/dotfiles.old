@@ -351,20 +351,21 @@ ResetIme()
 ;; ESC
 ;;
 ^[::
-  If (is_intellij() || is_rlogin() || is_vivaldi())
+;;  If (is_intellij() || is_rlogin() || is_vivaldi())
+  If (is_intellij() || is_rlogin())
     ResetIme()
   Else
     Send {ESC}
   Return
 
-; ;;
-; ;; Switching Backspace / Backslash
-; ;;
-; \::Send {Blind}{Backspace}
-; Backspace::Send {Blind}\
-; +\::Send {Blind}+{Backspace}
-; +Backspace::Send {Blind}|
-; ^\::Send {Blind}{DEL}
+;;
+;; Switching Backspace / Backslash
+;;
+\::Send {Blind}{Backspace}
+Backspace::Send {Blind}\
++\::Send {Blind}+{Backspace}
++Backspace::Send {Blind}|
+^\::Send {Blind}{DEL}
 
 ;;
 ;; Switching Right Win / Compose (for Sun type 7)
@@ -672,6 +673,23 @@ return
   Else
     Send %A_ThisHotkey%
   Return
+
+^d::
+  If (is_excel() || is_rlogin())
+    Send %A_ThisHotkey%
+  Else
+    Send {Del}
+  Return
+
+^h::Send {BS}
+;  If (is_excel() || is_console() || is_eclipse() || is_intellij() || is_acrobat())
+;    Send {BS}
+;  Else If is_target()
+;    Send %A_ThisHotkey%
+;  Else
+;    Send {BS}
+;  Return
+
 
 ;; -------------------------------------------------- 
 ;; TabTuner.ahk -- Giraffe/Data に直接配置する
