@@ -17,12 +17,12 @@ def configure(keymap):
     #----------------------------------------------
 
     emacs_target = [
-                    "MCalc.exe",
-                    "Giraffe.exe",
-                    "TE64.exe",
-                    "TeraPad.exe",
-                    "WINWORD.EXE",
-                    "notepad.exe"
+                    "MCalc.exe"
+                    , "Giraffe.exe"
+                    , "TE64.exe"
+                    , "TeraPad.exe"
+                    , "WINWORD.EXE"
+                    , "notepad.exe"
                     ]
 
     side_of_ctrl_key = "L"
@@ -190,6 +190,7 @@ def configure(keymap):
 
     delete_char_list = [
                         "EXCEL.EXE"
+                        , "TeraPad.exe"
                         , "vivaldi.exe"
                         , "cmd.exe"
                         , "eclipse.exe"
@@ -203,8 +204,18 @@ def configure(keymap):
             return False
 
         keymap_delete_char = keymap.defineWindowKeymap( check_func=able_to_delete_char )
-        keymap_delete_char[ "C-h" ] = delete_backward_char
+#        keymap_delete_char[ "C-h" ] = delete_backward_char
         keymap_delete_char[ "C-q" ] = "A-F4"
+
+    if 1:
+        def able_to_home_end(window):
+            if window.getProcessName() in ("EXCEL.EXE"):
+                return True
+            return False
+
+        keymap_home_end = keymap.defineWindowKeymap( check_func=able_to_home_end )
+        keymap_home_end[ "A-S-Comma" ] = mark(beginning_of_buffer)
+        keymap_home_end[ "A-S-Period" ] = mark(end_of_buffer)
 
     if 1:
         def able_to_handle_cursor(window):
@@ -240,9 +251,14 @@ def configure(keymap):
 
     # Esc / Enter / Delete
     if 1:
-        keymap_global[ "C-OpenBracket" ] = "Esc"
+#        keymap_global[ "C-h" ] = reset_mark(delete_backward_char)
+#        keymap_global[ "C-OpenBracket" ] = "Esc"
         keymap_global[ "C-j" ] = "Enter"
-        keymap_global[ "C-h" ] = reset_mark(delete_backward_char)
+
+#        if window.getProcessName() in ("EXCEL.EXE"):
+#        if not (checkWindow("EXCEL.EXE$", "EXCEL")):
+#            keymap_global[ "C-d" ] = "Delete"
+#            keymap_global[ "S-C-d" ] = "S-Delete"
 
     # Move Window
     if 1:
