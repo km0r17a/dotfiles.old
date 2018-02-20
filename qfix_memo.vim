@@ -123,7 +123,7 @@ if !exists('g:qfixmemo_title') || g:qfixmemo_title != '#'
 endif
 
 syn match qfixmemoCode display "`.\{-}`"
-syn match qfixmemoCodeSpace display "^    .*"
+syn match qfixmemoCodeSpace display "^    [^-+*].*"
 
 " github Fenced code blocks
 "syn match qfixmemoDelimiter '^```\s*[[:alnum:]]*$'

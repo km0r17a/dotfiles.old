@@ -142,51 +142,6 @@ function! MyPatch()
    :call system($VIM."\\'.'patch -o " . v:fname_out . " " . v:fname_in . " < " . v:fname_diff)
 endfunction
 
-"----------------------------------------
-" ノーマルモード
-"----------------------------------------
-
-" ヘルプ検索
-nnoremap <F1> K
-" 現在開いているvimスクリプトファイルを実行
-nnoremap <F8> :source %<CR>
-" 強制全保存終了を無効化
-nnoremap ZZ <Nop>
-" カーソルをj k では表示行で移動する。物理行移動は<C-n>,<C-p>
-" キーボードマクロには物理行移動を推奨
-" h l は行末、行頭を超えることが可能に設定(whichwrap)
-nnoremap <Down> gj
-nnoremap <Up>   gk
-nnoremap h <Left>
-nnoremap j gj
-nnoremap k gk
-nnoremap l <Right>
-" l を <Right>に置き換えても、折りたたみを l で開くことができるようにする
-if has('folding')
-  nnoremap <expr> l foldlevel(line('.')) ? "\<Right>zo" : "\<Right>"
-endif
-
-" 「日本語入力固定モード」の動作モード
-let IM_CtrlMode = 4
-" 「日本語入力固定モード」切替キー
-"inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-
-"----------------------------------------
-" 挿入モード
-"----------------------------------------
-
-"----------------------------------------
-" ビジュアルモード
-"----------------------------------------
-
-"----------------------------------------
-" コマンドモード
-"----------------------------------------
-
-"----------------------------------------
-" Vimスクリプト
-"----------------------------------------
-
 "-----------------------------
 " ファイルを開いたら前回のカーソル位置へ移動
 "$VIMRUNTIME/vimrc_example.vim
@@ -281,7 +236,7 @@ elseif has('unix')
 endif
 
 function! FormatXml()
-  execute ":%s/></>\r/g | setf xml | normal gg=G"
+  execute ":%s/></>\r</g | setf xml | normal gg=G"
 endfunction
 
 nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
@@ -336,8 +291,8 @@ if &compatible
   set nocompatible               " Be iMproved
 endif
 
-set runtimepath+=~/.vim/bundle/neobundle.vim/
-call neobundle#begin(expand('~/.vim/bundle/'))
+set runtimepath+=~/vimfiles/bundle/neobundle.vim/
+call neobundle#begin(expand('~/vimfiles/bundle/'))
 
 NeoBundleFetch 'Shougo/neobundle.vim'
 
@@ -524,6 +479,31 @@ endfunction
 " keymap
 "----------------------------------------
 
+"let mapleader = "\<Space>"
+
+" ヘルプ検索
+nnoremap <F1> K
+" 現在開いているvimスクリプトファイルを実行
+nnoremap <F8> :source %<CR>
+" カーソルをj k では表示行で移動する。物理行移動は<C-n>,<C-p>
+" キーボードマクロには物理行移動を推奨
+" h l は行末、行頭を超えることが可能に設定(whichwrap)
+nnoremap <Down> gj
+nnoremap <Up>   gk
+nnoremap h <Left>
+nnoremap j gj
+nnoremap k gk
+nnoremap l <Right>
+" l を <Right>に置き換えても、折りたたみを l で開くことができるようにする
+if has('folding')
+  nnoremap <expr> l foldlevel(line('.')) ? "\<Right>zo" : "\<Right>"
+endif
+
+" 「日本語入力固定モード」の動作モード
+let IM_CtrlMode = 4
+" 「日本語入力固定モード」切替キー
+"inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
 nnoremap ; :
 nnoremap : ;
 vnoremap ; :
@@ -532,13 +512,13 @@ nnoremap g. `.
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
 nnoremap Q <Nop>
-noremap <Space>h ^
-noremap <Space>l $
-noremap <Space>e $
-noremap <Space>m %
-nnoremap <Space>/ *
+"noremap <Leader>h ^
+"noremap <Leader>l $
+"noremap <Leader>e $
+"noremap <Leader>m %
+"nnoremap <Leader>/ *
 "nnoremap <C-t> :<C-u>tabnew<CR>
-nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
+nnoremap <silent> <Space>hl :<C-u>nohlsearch<CR>
 
 " Visual Mark
 "noremap <unique> ,s <Plug>Vm_goto_next_sign
@@ -1105,3 +1085,8 @@ let g:syntastic_mode_map = {
 
 let g:user_emmet_leader_key='<c-e>'
 
+"---------------------------------------
+" Disabled key bind
+"---------------------------------------
+
+nnoremap <c-x> <Nop>
