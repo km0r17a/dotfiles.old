@@ -1,9 +1,7 @@
 set nocompatible
 set encoding=utf-8
-set fileencodings=ucs-bom,iso-2022-jp,utf-8,cp932,euc-jp,default,latin
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
 set sessionoptions-=blank
-set fileformat=unix
-set fileformats=unix,dos,mac
 
 " $HOME が設定されていること。
 
@@ -15,20 +13,19 @@ elseif isdirectory($VIM . '\vimfiles')
   let $MY_VIMRUNTIME = $VIM.'\vimfiles'
 endif
 
-set runtimepath+=$MY_VIMRUNTIME/qfixapp
+set runtimepath^=$MY_VIMRUNTIME/qfixapp
 silent! source $MY_VIMRUNTIME/pluginjp/encode.vim
 
 "----------------------------------------
 " システム設定
 "----------------------------------------
 
-set backupdir=$HOME/vimfiles/.vimbackup
-set undodir=$HOME/vimfiles/.vimundo
+set backupdir=$HOME/.vim/.vimbackup
+set undodir=$HOME/.vim/.vimundo
 set noswapfile
 set nowritebackup
 set nobackup
 "set clipboard=unnamed
-"set clipboard=
 set clipboard=unnamed,autoselect
 
 set nrformats-=octal
@@ -55,8 +52,6 @@ set smartcase
 set wrapscan
 set incsearch
 set hlsearch
-set iminsert=0
-set imsearch=0
 
 "----------------------------------------
 " 表示設定
@@ -79,12 +74,9 @@ set laststatus=2
 set showcmd
 set display=lastline
 
-"if &t_Co > 2 || has('gui_running')
-"  syntax on
-"endif
-
-filetype off
-filetype plugin indent off
+if &t_Co > 2 || has('gui_running')
+  syntax on
+endif
 
 "-----------------------------
 " ステータスラインに文字コード等表示
@@ -143,6 +135,51 @@ function! MyPatch()
    :call system($VIM."\\'.'patch -o " . v:fname_out . " " . v:fname_in . " < " . v:fname_diff)
 endfunction
 
+"----------------------------------------
+" ノーマルモード
+"----------------------------------------
+
+" ヘルプ検索
+nnoremap <F1> K
+" 現在開いているvimスクリプトファイルを実行
+nnoremap <F8> :source %<CR>
+" 強制全保存終了を無効化
+nnoremap ZZ <Nop>
+" カーソルをj k では表示行で移動する。物理行移動は<C-n>,<C-p>
+" キーボードマクロには物理行移動を推奨
+" h l は行末、行頭を超えることが可能に設定(whichwrap)
+nnoremap <Down> gj
+nnoremap <Up>   gk
+nnoremap h <Left>
+nnoremap j gj
+nnoremap k gk
+nnoremap l <Right>
+" l を <Right>に置き換えても、折りたたみを l で開くことができるようにする
+if has('folding')
+  nnoremap <expr> l foldlevel(line('.')) ? "\<Right>zo" : "\<Right>"
+endif
+
+" 「日本語入力固定モード」の動作モード
+"let IM_CtrlMode = 4
+" 「日本語入力固定モード」切替キー
+"inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
+"----------------------------------------
+" 挿入モード
+"----------------------------------------
+
+"----------------------------------------
+" ビジュアルモード
+"----------------------------------------
+
+"----------------------------------------
+" コマンドモード
+"----------------------------------------
+
+"----------------------------------------
+" Vimスクリプト
+"----------------------------------------
+
 "-----------------------------
 " ファイルを開いたら前回のカーソル位置へ移動
 "$VIMRUNTIME/vimrc_example.vim
@@ -193,12 +230,11 @@ endfunction
 "全角スペースを表示
 "-----------------------------
 
-augroup highlightIdegraphicSpace
-  autocmd! highlightIdegraphicSpace
+"augroup highlightIdegraphicSpace
+"  autocmd! highlightIdegraphicSpace
 "  autocmd Colorscheme * highlight ZenkakuSpace term=underline ctermbg=lightblue guibg=darkgray
-  autocmd Colorscheme * highlight ZenkakuSpace term=underline ctermbg=lightblue guibg=lightblue
-  autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
-augroup END
+"  autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+"augroup END
 
 "-----------------------------
 " grep,tagsのためカレントディレクトリをファイルと同じディレクトリに移動する
@@ -217,7 +253,7 @@ augroup END
 "----------------------------------------
 
 set nolist
-set directory=$HOME/vimfiles/.vimbackup
+set directory=$HOME/.vim/.vimbackup
 
 "----------------------------------------
 " File Format
@@ -237,7 +273,7 @@ elseif has('unix')
 endif
 
 function! FormatXml()
-  execute ":%s/></>\r</g | setf xml | normal gg=G"
+  execute ":%s/></>\r/g | setf xml | normal gg=G"
 endfunction
 
 nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
@@ -247,43 +283,7 @@ nnoremap <silent> ,xx :call FormatXml()<CR>:echo "Format Xml."<CR>
 "----------------------------------------
 "set splitbelow
 "set splitright
-set previewheight=25
-
-"----------------------------------------
-" dein
-"----------------------------------------
-
-"let s:dein_dir = expand('~/.vim/dein')
-"let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-"
-"if &runtimepath !~# '/dein.vim'
-"  if !isdirectory(s:dein_repo_dir)
-"    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-"  endif
-"  execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
-"endif
-"
-"if dein#load_state(s:dein_dir)
-"  call dein#begin(s:dein_dir)
-"
-"  " プラグインリストを収めた TOML ファイル
-"  " 予め TOML ファイル（後述）を用意しておく
-"  let g:rc_dir    = expand('~/.vim/rc')
-"  let s:toml      = g:rc_dir . '/dein.toml'
-"  let s:lazy_toml = g:rc_dir . '/dein_lazy.toml'
-"
-"  " TOML を読み込み、キャッシュしておく
-"  call dein#load_toml(s:toml,      {'lazy': 0})
-"  call dein#load_toml(s:lazy_toml, {'lazy': 1})
-"
-"  " 設定終了
-"  call dein#end()
-"  call dein#save_state()
-"endif
-"
-"if dein#check_install()
-"  call dein#install()
-"endif
+set previewheight=30
 
 "----------------------------------------
 " neobundle
@@ -292,29 +292,27 @@ if &compatible
   set nocompatible               " Be iMproved
 endif
 
-set runtimepath+=~/vimfiles/bundle/neobundle.vim/
-call neobundle#begin(expand('~/vimfiles/bundle/'))
+set runtimepath^=~/.vim/bundle/neobundle.vim/
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " originalrepos on github
 NeoBundle  'Shougo/vimfiler.vim'
 NeoBundle  'Shougo/unite.vim'
+NeoBundle  'Shougo/neocomplcache'
 NeoBundle  'Shougo/neomru.vim'
 NeoBundle  'Shougo/neosnippet'
 NeoBundle  'Shougo/neosnippet-snippets'
-NeoBundle  'mattn/benchvimrc-vim'
-
-" NeoBundle  'Shougo/vimproc.vim', {
-" \ 'build' : {
-" \     'windows' : 'gmake -f make_mingw64.mak',
-" \     'cygwin' : 'make -f make_cygwin.mak',
-" \     'mac' : 'make',
-" \     'linux' : 'make',
-" \     'unix' : 'gmake',
-" \    },
-" \ }
-
+NeoBundle  'Shougo/vimproc.vim', {
+\ 'build' : {
+\     'windows' : 'gmake -f make_mingw64.mak',
+\     'cygwin' : 'make -f make_cygwin.mak',
+\     'mac' : 'make',
+\     'linux' : 'make',
+\     'unix' : 'gmake',
+\    },
+\ }
 "\     'windows' : 'tools\\update-dll-mingw',
 NeoBundle  'Shougo/vimshell'
 
@@ -326,13 +324,24 @@ NeoBundle  'xolox/vim-session', {
              \ }
 NeoBundle  'kana/vim-submode'
 NeoBundle  'deris/vim-diffbuf'
+NeoBundle  'tyru/restart.vim'
 NeoBundle  'spolu/dwm.vim'
 
 " Color Scheme
 "NeoBundle  'ujihisa/unite-colorscheme'
 NeoBundle  'itchyny/lightline.vim'
-" NeoBundle  'w0ng/vim-hybrid'
+"NeoBundle  'itchyny/landscape.vim'
+"NeoBundle  'altercation/vim-colors-solarized'
+"NeoBundle  'nanotech/jellybeans.vim'
+NeoBundle  'w0ng/vim-hybrid'
 NeoBundle  'cocopon/lightline-hybrid.vim'
+"NeoBundle  'cocopon/colorswatch.vim'
+"NeoBundle  'chriskempson/tomorrow-theme'
+
+" コード補完
+NeoBundle 'Shougo/neocomplete.vim'
+"NeoBundle 'marcus/rsense'
+"NeoBundle 'supermomonga/neocomplete-rsense.vim'
 
 " 静的解析
 NeoBundle 'scrooloose/syntastic'
@@ -341,7 +350,7 @@ NeoBundle 'scrooloose/syntastic'
 "NeoBundle 'thinca/vim-ref'
 "NeoBundle 'yuku-t/vim-ref-ri'
 
-"" メソッド定義元へのジャンプ
+" メソッド定義元へのジャンプ
 "NeoBundle 'szw/vim-tags'
 
 " 自動で閉じる
@@ -350,7 +359,8 @@ NeoBundle 'tpope/vim-endwise'
 NeoBundle 'tpope/vim-unimpaired'
 
 " for ag
-NeoBundle 'dyng/ctrlsf.vim'
+"NeoBundle 'dyng/ctrlsf.vim'
+NeoBundle "ctrlpvim/ctrlp.vim"
 NeoBundle 'rking/ag.vim'
 
 NeoBundle 'elzr/vim-json'
@@ -359,53 +369,26 @@ NeoBundle 'osyo-manga/vim-anzu'
 NeoBundle 'haya14busa/vim-asterisk'
 
 NeoBundle 'tpope/vim-surround'
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'othree/html5.vim'
-NeoBundle 'mattn/emmet-vim'
-
-NeoBundle 'dhruvasagar/vim-table-mode'           " for markdown(table)
-
-"NeoBundleLazy  'Konfekt/FastFold'
-
-NeoBundleLazy 'pangloss/vim-javascript', {'filetypes': ['html', 'php', 'javascript']}
-"NeoBundleLazy 'vim-scripts/taglist.vim', {'commands': 'Tlist'}
-NeoBundleLazy 'Shougo/neocomplete.vim'
-
-"NeoBundleFetch 'tokuhirom/jsref'
-"NeoBundleFetch 'mustardamus/jqapi'
-"NeoBundleLazy 'thinca/vim-ref', {'depends': 'mojako/ref-sources.vim', 'on_func': 'ref#K', 'on_map': '<Plug>(ref-keyword)'}
-"
-"let g:ref_no_default_key_mappings = 1
-"inoremap <silent><C-k> <C-o>:call<Space>ref#K('normal')<CR><ESC>
-"nmap <silent>K <Plug>(ref-keyword)
-"let s:hooks = neobundle#get_hooks('vim-ref')
-"function! s:hooks.on_source(bundle) abort "{{{
-"    let g:ref_cache_dir       = s:envHome .'/.vim/vim-ref/cache'
-"    let g:ref_detect_filetype = {
-"    \    'html':       ['javascript', 'jquery'],
-"    \    'javascript': ['javascript', 'jquery']}
-"    let g:ref_javascript_doc_path = s:envHome .'/.vim/bundle/jsref/htdocs'
-"    let g:ref_jquery_doc_path     = s:envHome .'/.vim/bundle/jqapi'
-"    let g:ref_use_cache           = 1
-"    let g:ref_use_vimproc         = 1
-"endfunction
-"let g:table_mode_corner="|"
 
 call neobundle#end()
 filetype plugin indent on
 NeoBundleCheck
 
 syntax on
-set synmaxcol=300
 set background=dark
+"colorscheme chocolate
+"colorscheme zellner
 colorscheme hybrid
+
+let g:hybrid_custom_term_colors = 1
+"let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
 
 "----------------------------------------
 " singleton
 "----------------------------------------
 
 if has('win64')
-    call singleton#enable()
+  call singleton#enable()
 endif
 
 "----------------------------------------
@@ -480,46 +463,26 @@ endfunction
 " keymap
 "----------------------------------------
 
-"let mapleader = "\<Space>"
+"nnoremap <leader>f <C-^>
+"nnoremap <leader>v :e #<CR>
+nnoremap <C-d> :e #<CR>
 
-" ヘルプ検索
-nnoremap <F1> K
-" 現在開いているvimスクリプトファイルを実行
-nnoremap <F8> :source %<CR>
-" カーソルをj k では表示行で移動する。物理行移動は<C-n>,<C-p>
-" キーボードマクロには物理行移動を推奨
-" h l は行末、行頭を超えることが可能に設定(whichwrap)
-nnoremap <Down> gj
-nnoremap <Up>   gk
-nnoremap h <Left>
-nnoremap j gj
-nnoremap k gk
-nnoremap l <Right>
-" l を <Right>に置き換えても、折りたたみを l で開くことができるようにする
-if has('folding')
-  nnoremap <expr> l foldlevel(line('.')) ? "\<Right>zo" : "\<Right>"
+if &term =~ "xterm-256color"
+  nnoremap : ;
+  nnoremap ; :
 endif
 
-" 「日本語入力固定モード」の動作モード
-let IM_CtrlMode = 4
-" 「日本語入力固定モード」切替キー
-"inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-
-nnoremap ; :
-nnoremap : ;
-vnoremap ; :
-vnoremap : ;
 nnoremap g. `.
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
 nnoremap Q <Nop>
-"noremap <Leader>h ^
-"noremap <Leader>l $
-"noremap <Leader>e $
-"noremap <Leader>m %
-"nnoremap <Leader>/ *
+noremap <Space>h ^
+noremap <Space>l $
+noremap <Space>e $
+noremap <Space>m %
+nnoremap <Space>/ *
 "nnoremap <C-t> :<C-u>tabnew<CR>
-nnoremap <silent> <Space>hl :<C-u>nohlsearch<CR>
+nnoremap <silent> <space>hl :<C-u>nohlsearch<CR>
 
 " Visual Mark
 "noremap <unique> ,s <Plug>Vm_goto_next_sign
@@ -648,18 +611,19 @@ call submode#map('bufmove', 'n', '', '-', '<C-w>-')
 let QFixHowm_Key = ','
 let QFixHowm_KeyB = ','
 
-let howm_dir = '~/Documents/howm'
+"let howm_dir = '~/Documents/howm'
+let howm_dir = '~/docs/howm'
 let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
 let howm_fileencoding = &enc
-let howm_fileformat = 'unix'
+let howm_fileformat = 'dos'
 
 let QFixWin_EnableMode = 2
 let QFix_UseLocationList = 1
 "let QFixHowm_FileType = 'conf.howm_memo.qfix_memo.markdown'
-let QFixHowm_FileType = 'asciidoc.qfix_memo'
+let QFixHowm_FileType = 'qfix_memo'
 
 " サブメニューで表示するファイル名
-let SubWindow_Title = '~/.vim/__submenu__.howm'
+let SubWindow_Title = '~/my_home/.vim/__submenu__.howm'
 " サブメニューの幅指定
 let SubWindow_Width = 35
 
@@ -689,7 +653,7 @@ let QFixHowm_DiaryFile = '%Y/%m/%Y-%m-000000'
 "----------------------------------------
 
 let QFixMRU_Entries = 50
-let QFixMRU_Filename = '~/vimfiles/.qfixmru'
+let QFixMRU_Filename = '~/.vim/.qfixmru'
 "let QFixMRU_IgnoreFile   = '/pairlink/'
 let QFixMRU_RegisterFile = '\.\(howm\|txt\|mkd\|wiki\)$'
 let QFixMRU_IgnoreTitle  = ':invisible'
@@ -728,15 +692,15 @@ set grepprg=internal
 let myjpgrepprg = ''
 
 " 外部grep(shell)のエンコーディング(Unix)
-"let MyGrep_ShellEncoding = 'utf-8'
-let MyGrep_ShellEncoding = 'cp932'
+let MyGrep_ShellEncoding = 'utf-8'
+"let MyGrep_ShellEncoding = 'cp932'
 " 外部grepで検索結果のエンコーディング変換が行われる場合のエンコーディング指定
 " (通常はMyGrep_ShellEncodingと同一のため設定しないでください)
 let MyGrep_FileEncoding = ''
 
 " 検索ディレクトリはカレントディレクトリを基点にする
 " 0なら現在開いているファイルの存在するディレクトリを基点
-let MyGrep_CurrentDirMode = 0
+let MyGrep_CurrentDirMode = 1
 
 " 「だめ文字」対策を有効/無効
 let MyGrep_Damemoji = 2
@@ -754,13 +718,15 @@ let MyGrep_DefaultSearchWord = 0
 " crontab 
 set backupskip=/tmp/*,/private/tmp/*
 
+let QFixHowm_Folding               = 0
+
 "----------------------------------------
 " Vim Session
 "----------------------------------------
 
-" 現在のディレクトリ直下の sessions/ を取得 
-"let s:local_session_directory = xolox#misc#path#merge(getcwd(), '.vimsessions')
-let s:local_session_directory = expand('~/vimfiles/sessions')
+" 現在のディレクトリ直下の .vimsessions/ を取得 
+"let s:local_session_directory = xolox#misc#path#merge(getcwd(), 'sessions')
+let s:local_session_directory = expand('~/.vim/sessions')
 if isdirectory(s:local_session_directory)
   let g:session_directory = s:local_session_directory
   let g:session_autosave = 'yes'
@@ -794,28 +760,26 @@ let g:restart_sessionoptions = 'buffers,curdir,folds,help,localoptions,tabpages'
 "nmap <c-Space> <Plug>DWMFocus
 "nmap <c-l> <Plug>DWMGrowMaster
 "nmap <c-h> <Plug>DWMShrinkMaster
-
+ 
 nnoremap <m-t> <c-w>w
 nnoremap <m-r> <c-w>W
-nmap <m-h> <Plug>DWMRotateCounterclockwise
-nmap <m-l> <Plug>DWMRotateClockwise
+nmap <c-h> <Plug>DWMRotateCounterclockwise
+nmap <c-l> <Plug>DWMRotateClockwise
 nmap <c-n> <Plug>DWMNew
-"nmap <c-c> <Plug>DWMClose
+nmap <c-c> <Plug>DWMClose
 nmap <c-@> <Plug>DWMFocus
 nmap <c-Space> <Plug>DWMFocus
-nmap <c-q> <Plug>DWMGrowMaster
+nmap <c-q> <Plug>DWMGrowMaster  " set cmd 'stty -ixon' in your .bashrc
 nmap <c-z> <Plug>DWMShrinkMaster
 
-"nnoremap <buffer> <c-k> <c-k>
- 
 " Unite 設定
 noremap zp :Unite buffer_tab file_mru -auto-preview<CR>
 noremap zn :UniteWithBufferDir -buffer-name=files file file/new -auto-preview<CR>
 
-"----------------------------------------
-" Previm + vim-markdown
-"----------------------------------------
-
+""----------------------------------------
+"" Previm + vim-markdown
+""----------------------------------------
+"
 "let g:vim_markdown_folding_disabled = 1
 ""set conceallevel=2
 "
@@ -883,61 +847,63 @@ endfunction
 
 set guitablabel=%{GuiTabLabel()}
 
-" "----------------------------------------
-" " SyntaxInfo
-" "----------------------------------------
-" 
-" function! s:get_syn_id(transparent)
-"   let synid = synID(line("."), col("."), 1)
-"   if a:transparent
-"     return synIDtrans(synid)
-"   else
-"     return synid
-"   endif
-" endfunction
-" function! s:get_syn_attr(synid)
-"   let name = synIDattr(a:synid, "name")
-"   let ctermfg = synIDattr(a:synid, "fg", "cterm")
-"   let ctermbg = synIDattr(a:synid, "bg", "cterm")
-"   let guifg = synIDattr(a:synid, "fg", "gui")
-"   let guibg = synIDattr(a:synid, "bg", "gui")
-"   return {
-"         \ "name": name,
-"         \ "ctermfg": ctermfg,
-"         \ "ctermbg": ctermbg,
-"         \ "guifg": guifg,
-"         \ "guibg": guibg}
-" endfunction
-" function! s:get_syn_info()
-"   let baseSyn = s:get_syn_attr(s:get_syn_id(0))
-"   echo "name: " . baseSyn.name .
-"         \ " ctermfg: " . baseSyn.ctermfg .
-"         \ " ctermbg: " . baseSyn.ctermbg .
-"         \ " guifg: " . baseSyn.guifg .
-"         \ " guibg: " . baseSyn.guibg
-"   let linkedSyn = s:get_syn_attr(s:get_syn_id(1))
-"   echo "link to"
-"   echo "name: " . linkedSyn.name .
-"         \ " ctermfg: " . linkedSyn.ctermfg .
-"         \ " ctermbg: " . linkedSyn.ctermbg .
-"         \ " guifg: " . linkedSyn.guifg .
-"         \ " guibg: " . linkedSyn.guibg
-" endfunction
-" command! SyntaxInfo call s:get_syn_info()
+"----------------------------------------
+" SyntaxInfo
+"----------------------------------------
+
+function! s:get_syn_id(transparent)
+  let synid = synID(line("."), col("."), 1)
+  if a:transparent
+    return synIDtrans(synid)
+  else
+    return synid
+  endif
+endfunction
+function! s:get_syn_attr(synid)
+  let name = synIDattr(a:synid, "name")
+  let ctermfg = synIDattr(a:synid, "fg", "cterm")
+  let ctermbg = synIDattr(a:synid, "bg", "cterm")
+  let guifg = synIDattr(a:synid, "fg", "gui")
+  let guibg = synIDattr(a:synid, "bg", "gui")
+  return {
+        \ "name": name,
+        \ "ctermfg": ctermfg,
+        \ "ctermbg": ctermbg,
+        \ "guifg": guifg,
+        \ "guibg": guibg}
+endfunction
+function! s:get_syn_info()
+  let baseSyn = s:get_syn_attr(s:get_syn_id(0))
+  echo "name: " . baseSyn.name .
+        \ " ctermfg: " . baseSyn.ctermfg .
+        \ " ctermbg: " . baseSyn.ctermbg .
+        \ " guifg: " . baseSyn.guifg .
+        \ " guibg: " . baseSyn.guibg
+  let linkedSyn = s:get_syn_attr(s:get_syn_id(1))
+  echo "link to"
+  echo "name: " . linkedSyn.name .
+        \ " ctermfg: " . linkedSyn.ctermfg .
+        \ " ctermbg: " . linkedSyn.ctermbg .
+        \ " guifg: " . linkedSyn.guifg .
+        \ " guibg: " . linkedSyn.guibg
+endfunction
+command! SyntaxInfo call s:get_syn_info()
 
 "----------------------------------------
 " Modify Color Scheme
 "----------------------------------------
 
-autocmd ColorScheme * highlight vimLineComment guifg=#a9a9a9
-autocmd ColorScheme * highlight Comment guifg=#a9a9a9
+"autocmd ColorScheme * highlight vimLineComment guifg=#a9a9a9
+"autocmd ColorScheme * highlight Comment guifg=#a9a9a9
+highlight vimLineComment guifg=#a9a9a9
+highlight Comment guifg=#a9a9a9
 
 "----------------------------------------
 " Modify tab
 "----------------------------------------
 
-set noexpandtab
-"set expandtab
+"set noexpandtab
+set expandtab
 set autoindent
 set smartindent
 set tabstop=4
@@ -946,12 +912,11 @@ set softtabstop=4
 
 augroup fileTypeIndent
     autocmd!
-    autocmd BufNewFile,BufRead *.js setlocal expandtab tabstop=2 softtabstop=2 shiftwidth=2
-    autocmd BufNewFile,BufRead *.jsx setlocal expandtab tabstop=2 softtabstop=2 shiftwidth=2
-    autocmd BufNewFile,BufRead *.sh setlocal expandtab tabstop=2 softtabstop=2 shiftwidth=2
-    autocmd BufNewFile,BufRead *.py setlocal expandtab tabstop=4 softtabstop=4 shiftwidth=4
-    autocmd BufNewFile,BufRead *.rb setlocal expandtab tabstop=2 softtabstop=2 shiftwidth=2
-    autocmd BufNewFile,BufRead *.java setlocal expandtab tabstop=4 softtabstop=4 shiftwidth=4
+    autocmd BufNewFile,BufRead *.jsx setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.js setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.sh setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.py setlocal tabstop=4 softtabstop=4 shiftwidth=4
+    autocmd BufNewFile,BufRead *.rb setlocal tabstop=2 softtabstop=2 shiftwidth=2
 augroup END
 
 "----------------------------------------
@@ -984,10 +949,49 @@ nnoremap <silent> ,ss <S-v>:VimShellSendString<CR>
 " 特定のキー（r）にだけ適用する場合
 " set <M-r>=[C-v を押す][Alt-r を押す]
 " imap [C-v を押す][Esc を押す]r <M-r>
-"set <M-r>=o
-"imap r <M-r>
-"set <M-t>=o
-"imap t <M-t>
+set <M-r>=r
+imap r <M-r>
+set <M-t>=t
+imap t <M-t>
+
+"----------------------------------------
+" IME auto off
+"----------------------------------------
+
+let IM_vi_CooperativeMode = 0
+inoremap <silent> <ESC> <ESC>:<CR>
+inoremap <silent> <C-[> <ESC>:<CR>
+set timeout timeoutlen=3000 ttimeoutlen=100
+
+"----------------------------------------
+" Folding
+"----------------------------------------
+set foldmethod=indent
+set foldlevel=15
+"set foldcolumn=3
+
+"----------------------------------------
+" Cursor for xterm or screen
+"----------------------------------------
+" Set up vertical vs block cursor for insert/normal mode
+""if &term =~ "screen."
+if &term =~ "xterm-256color"
+  let &t_ti.="\eP\e[1 q\e\\"
+  let &t_SI.="\eP\e[5 q\e\\"
+  let &t_EI.="\eP\e[1 q\e\\"
+  let &t_te.="\eP\e[0 q\e\\"
+else
+  let &t_ti.="\<Esc>[1 q"
+  let &t_SI.="\<Esc>[5 q"
+  let &t_EI.="\<Esc>[1 q"
+  let &t_te.="\<Esc>[0 q"
+endif
+
+"----------------------------------------
+" for Clipboard
+"----------------------------------------
+vnoremap <silent> "+Y :w !winclip<CR><CR>
+vnoremap <silent> "*Y :w !winclip<CR><CR>
 
 "----------------------------------------
 " ag + ctrlsf
@@ -1030,7 +1034,7 @@ if executable('jq')
     " エラーメッセージ用バッファは読み取り専用にしておく
     setlocal readonly
   endfunction
-  command! -bar -bang -range=% -nargs=? Jq <line1>,<line2>call s:jq(<bang>0, <f-args>)
+  command! -bar -bang -range=% -nargs=? Jq  <line1>,<line2>call s:jq(<bang>0, <f-args>)
 endif
 
 "----------------------------------------
@@ -1054,12 +1058,6 @@ let g:asterisk#keeppos = 1
 
 " statusline
 set statusline=%{anzu#search_status()}
-
-"----------------------------------------
-" for VimFiler
-"----------------------------------------
-
-"cd ~
 
 "----------------------------------------
 " Syntastic
@@ -1087,8 +1085,83 @@ let g:syntastic_mode_map = {
 
 let g:user_emmet_leader_key='<c-e>'
 
-"---------------------------------------
-" Disabled key bind
-"---------------------------------------
+"----------------------------------------
+" for VimFiler
+"----------------------------------------
 
-nnoremap <c-x> <Nop>
+"cd ~
+
+set t_Co=256
+
+"----------------------------------------
+" Tag Jump
+"----------------------------------------
+
+"nnoremap <C-]> g<C-]>
+"nnoremap <C-]> :vsp<CR> :exe("tjump ".expand('<cword>'))<CR>
+"nnoremap <C-]> :split<CR> :exe("tjump ".expand('<cword>'))<CR>
+
+set notagbsearch
+
+" " [tag jump] カーソルの単語の定義先にジャンプ（複数候補はリスト表示）
+" nnoremap tj :exe("tjump ".expand('<cword>'))<CR>
+" 
+" " [tag back] tag stack を戻る -> tp(tag pop)よりもtbの方がしっくりきた
+" nnoremap tb :pop<CR>
+" 
+" " [tag next] tag stack を進む
+" nnoremap tn :tag<CR>
+" 
+" " [tag vertical] 縦にウィンドウを分割してジャンプ
+" nnoremap tv :vsp<CR> :exe("tjump ".expand('<cword>'))<CR>
+" 
+" " [tag horizon] 横にウィンドウを分割してジャンプ
+" nnoremap th :split<CR> :exe("tjump ".expand('<cword>'))<CR>
+" 
+" " [tag tab] 新しいタブでジャンプ
+" nnoremap tt :tab sp<CR> :exe("tjump ".expand('<cword>'))<CR>
+" 
+" [tags list] tag list を表示
+nnoremap tl :ts<CR>
+nnoremap <C-]> :<C-u>vsp<CR> :exe("tjump ".expand('<cword>'))<CR>
+
+"----------------------------------------
+" CtrlP
+"----------------------------------------
+
+  let g:ctrlp_prompt_mappings = {
+    \ 'PrtBS()':              ['<bs>', '<c-]>'],
+    \ 'PrtDelete()':          ['<del>'],
+    \ 'PrtDeleteWord()':      ['<c-w>'],
+    \ 'PrtClear()':           ['<c-u>'],
+    \ 'PrtSelectMove("j")':   ['<c-n>', '<down>'],
+    \ 'PrtSelectMove("k")':   ['<c-p>', '<up>'],
+    \ 'PrtSelectMove("t")':   ['<Home>', '<kHome>'],
+    \ 'PrtSelectMove("b")':   ['<End>', '<kEnd>'],
+    \ 'PrtSelectMove("u")':   ['<PageUp>', '<kPageUp>'],
+    \ 'PrtSelectMove("d")':   ['<PageDown>', '<kPageDown>'],
+    \ 'PrtHistory(-1)':       ['<c-k>'],
+    \ 'PrtHistory(1)':        ['<c-j>'],
+    \ 'AcceptSelection("e")': ['<cr>', '<2-LeftMouse>'],
+    \ 'AcceptSelection("h")': ['<c-x>', '<c-cr>', '<c-s>'],
+    \ 'AcceptSelection("t")': ['<c-t>'],
+    \ 'AcceptSelection("v")': ['<c-v>', '<RightMouse>'],
+    \ 'ToggleFocus()':        ['<s-tab>'],
+    \ 'ToggleRegex()':        ['<c-r>'],
+    \ 'ToggleByFname()':      ['<c-d>'],
+    \ 'ToggleType(1)':        ['<c-f>', '<c-up>'],
+    \ 'ToggleType(-1)':       ['<c-b>', '<c-down>'],
+    \ 'PrtExpandDir()':       ['<tab>'],
+    \ 'PrtInsert("c")':       ['<MiddleMouse>', '<insert>'],
+    \ 'PrtInsert()':          ['<c-\>'],
+    \ 'PrtCurStart()':        ['<c-a>'],
+    \ 'PrtCurEnd()':          ['<c-e>'],
+    \ 'PrtCurLeft()':         ['<c-h>', '<left>', '<c-^>'],
+    \ 'PrtCurRight()':        ['<c-l>', '<right>'],
+    \ 'PrtClearCache()':      ['<F5>'],
+    \ 'PrtDeleteEnt()':       ['<F7>'],
+    \ 'CreateNewFile()':      ['<c-y>'],
+    \ 'MarkToOpen()':         ['<c-z>'],
+    \ 'OpenMulti()':          ['<c-o>'],
+    \ 'PrtExit()':            ['<esc>', '<c-c>', '<c-g>'],
+    \ }
