@@ -27,6 +27,8 @@ def configure(keymap):
                     , "TeraPad.exe"
                     , "WINWORD.EXE"
                     , "notepad.exe"
+                    , "FreeCommander.exe"
+                    , "AsciidocFx.exe"
                     ]
 
     side_of_ctrl_key = "L"
@@ -258,7 +260,7 @@ def configure(keymap):
 
     if 1:
         def move_tab(window):
-            if window.getProcessName() in ("SourceTree.exe", "vivaldi.exe", "chrome.exe", "TE64.exe", "AcroRd32.exe"):
+            if window.getProcessName() in ("SourceTree.exe", "vivaldi.exe", "chrome.exe", "TE64.exe", "AcroRd32.exe", "FreeCommander.exe"):
                 return True
             return False
 
@@ -319,7 +321,7 @@ def configure(keymap):
 
     if 1:
         def is_filer(window):
-            if window.getProcessName() in ("TE64.exe", "explorer.exe"):
+            if window.getProcessName() in ("TE64.exe", "explorer.exe", "FreeCommander.exe"):
                 return True
             return False
 
@@ -329,7 +331,7 @@ def configure(keymap):
 
     if 1:
         def able_to_handle_cursor(window):
-            if window.getProcessName() in ("POWERPNT.EXE"):
+            if window.getProcessName() in ("POWERPNT.EXE", "Calculator.exe"):
                 return True
             return False
 
@@ -339,6 +341,7 @@ def configure(keymap):
         keymap_cursor[ "LC-n" ] = mark(next_line)
         keymap_cursor[ "LC-c" ] = reset_mark(kill_ring_save)
         keymap_cursor[ "LC-v" ] = reset_mark(yank)
+        keymap_cursor[ "LC-y" ] = reset_mark(yank)
         keymap_cursor[ "LC-a" ] = move_beginning_of_line
         keymap_cursor[ "LC-e" ] = move_end_of_line
         keymap_cursor[ "LC-k" ] = reset_mark(kill_line)
@@ -388,6 +391,7 @@ def configure(keymap):
 
     # Del / Undo / Copy / Paste
     if 1:
+        keymap_global[ "LC-LS-D" ] = "Delete"
         keymap_global[ "LC-h" ] = reset_mark(delete_backward_char)
         keymap_global[ "LA-z" ] = "C-Z"
         keymap_global[ "LA-w" ] = "C-W"
@@ -400,7 +404,7 @@ def configure(keymap):
         keymap_global[ "LW-LC-l" ] = "W-C-Right"
 
     # HJKL
-    if 1:
+    if 0:
         keymap.replaceKey( 242, 243 )
 
         keymap_global[ "RW-h" ] = mark(backward_char)
@@ -417,7 +421,7 @@ def configure(keymap):
         keymap_global[ "LS-RW-0" ] = "Shift-Home"
         keymap_global[ "LS-RW-9" ] = "Shift-End"
 
-    if 0:
+    if 1:
         keymap_global[ "RC-h" ] = mark(backward_char)
         keymap_global[ "RC-l" ] = mark(forward_char) 
         keymap_global[ "RC-j" ] = mark(next_line) 
@@ -431,6 +435,20 @@ def configure(keymap):
         keymap_global[ "LS-RC-k" ] = "Shift-Up"
         keymap_global[ "LS-RC-0" ] = "Shift-Home"
         keymap_global[ "LS-RC-9" ] = "Shift-End"
+
+        keymap_global[ "RC-Left" ] = "A-Left"
+        keymap_global[ "RC-Right" ] = "A-Right"
+
+    if 1:
+        keymap_global[ "RC-LC-h" ] = "Ctrl-Left"
+        keymap_global[ "RC-LC-l" ] = "Ctrl-Right"
+        keymap_global[ "RC-LC-j" ] = "Ctrl-Down"
+        keymap_global[ "RC-LC-k" ] = "Ctrl-Up"
+
+        keymap_global[ "RC-LC-LS-h" ] = "Shift-Ctrl-Left"
+        keymap_global[ "RC-LC-LS-l" ] = "Shift-Ctrl-Right"
+        keymap_global[ "RC-LC-LS-j" ] = "Shift-Ctrl-Down"
+        keymap_global[ "RC-LC-LS-k" ] = "Shift-Ctrl-Up"
 
     if 1:
         keymap_global[ "LA-LS-Comma" ] = mark(beginning_of_buffer)
