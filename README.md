@@ -21,6 +21,7 @@ vim -c ':NeoBundleInstall'"
 .vim および 便利コマンド導入
 [source,shell]
 ----
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew update
 brew install binutils cmake coreutils ctags gdbm glib jpeg lv tig tmux tree w3m wget
 brew install vim
@@ -30,10 +31,11 @@ brew install vim
 .tmux とmac osx のクリップボード連携
 [source,shell]
 ----
-git clone https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git
-cd tmux-MacOSX-pasteboard
-make reattach-to-user-namespace && cp reattach-to-user-namespace ~/bin
+brew install reattach-to-user-namespace
 ----
+// git clone https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git
+// cd tmux-MacOSX-pasteboard
+// make reattach-to-user-namespace && cp reattach-to-user-namespace ~/bin
 
 .tools
 
