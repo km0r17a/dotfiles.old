@@ -49,3 +49,12 @@ brew install reattach-to-user-namespace
 * Google Input
 * IntelliJ IDEA
 
+.Path Finder Configs
+[source,shell]
+----
+Library/Preferences/com.cocoatech.PathFinder.plist
+Library/Application\ Support/Path\ Finder/Settings/Data\ Store/defaultViewOptions.plist
+Library/Application\ Support/Path\ Finder/Settings/Data\ Store/directoryAttributes.plist
+Library/Application\ Support/Path\ Finder/Settings/Data\ Store/directoryViewOptions.plist
+Library/Application\ Support/Path\ Finder/Settings/Data\ Store/trashAttributes.plist
+----
