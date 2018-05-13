@@ -907,10 +907,11 @@ imap l <M-l>
 "inoremap <ESC> <ESC>
 
 let IM_vi_CooperativeMode = 0
-inoremap <silent> <ESC> <ESC>:<CR>
+"inoremap <silent> <ESC> <ESC>:<CR>
 ""inoremap <silent> <C-[> <ESC>:<CR>
 "set timeout timeoutlen=300 ttimeoutlen=10
 ""set timeout timeoutlen=30 ttimeoutlen=5
+set timeoutlen=1000 ttimeoutlen=0
 
 "----------------------------------------
 " Folding
