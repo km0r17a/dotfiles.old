@@ -1,0 +1,20 @@
+tmux() {
+  local TMUXDIR=/tmp/.keimorit-tmux
+  if ! [ -d $TMUXDIR ]; then
+    rm -rf $TMUXDIR
+    mkdir -p $TMUXDIR
+  fi
+  rm -rf $TMUXDIR/.sshrc.d
+  cp -r $SSHHOME/.sshrc $SSHHOME/bashsshrc $SSHHOME/sshrc $SSHHOME/.sshrc.d $TMUXDIR
+  SSHHOME=$TMUXDIR SHELL=$TMUXDIR/bashsshrc `which tmux` -f $SSHHOME/.sshrc.d/.tmux.conf -S $TMUXDIR/tmuxserver $@
+}
+
+screen() {
+  /usr/bin/screen -c "$SSHHOME/.sshrc.d/.screenrc"
+}
+
+export VIMINIT="let \$MYVIMRC='$SSHHOME/.sshrc.d/.vimrc' | source \$MYVIMRC"
+export SHELL=`which bash`
+
+source $SSHHOME/.sshrc.d/.bashrc
+
